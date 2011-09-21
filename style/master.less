@@ -32,13 +32,39 @@ body {
 	stroke-width:2;
 }
 
-.alpha { fill: #00F; stroke:#00F; }
-.beta { fill: #800080; stroke:#800080; }
-.charlie { fill: #FF8000;	stroke:#FF8000; }
-.delta { fill: #FF0; stroke:#FF0; }
-.echo { fill: #F00; stroke:#F00; }
-.foxtrot { fill: #0C9400;	stroke:#0C9400; }
+@alpha: #00F;
+@bravo:  #800080;
+@charlie: #FF8000;
+@delta: #FF0;
+@echo: #F00;
+@foxtrot: #0C9400;
 
+svg {
+  .alpha { fill: @alpha; stroke:@alpha; }
+  .bravo { fill: @bravo; stroke:@bravo; }
+  .charlie { fill: @charlie; stroke:@charlie; }
+  .delta { fill: @delta; stroke:@delta; }
+  .echo { fill: @echo; stroke:@echo; }
+  .foxtrot { fill: @foxtrot; stroke:@foxtrot; }
+}
+.list {
+  .group {
+    cursor: pointer;
+    border-left: 3px solid;
+    padding: 2px 5px;
+    margin-bottom: 2px;
+    .name { font-size: 14px; font-weight: bold; margin-right: 5px; }
+    .user { font-size: 10px; }
+    .user.self { text-decoration: underline; }
+    &.chosen { border-left-style: dotted; }
+  }
+  .alpha { border-color:@alpha; }
+  .bravo { border-color:@bravo; }
+  .charlie { border-color:@charlie; }
+  .delta { border-color:@delta; }
+  .echo { border-color:@echo; }
+  .foxtrot { border-color:@foxtrot; }
+}
 
 .compass {
   rect.back.fore { fill: #999; fill-opacity: .3; stroke: #eee; stroke-width: 1px; shape-rendering: crispEdges; }
