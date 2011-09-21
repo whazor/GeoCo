@@ -19,7 +19,12 @@ html(lang="en", class="no-js")
               a 2011
             li
               a 2010
-          p.pull-right Ingelogd als <a href="#">Gast</a>.
+          ul.pull-right.nav.secondary-nav
+            li.dropdown
+              a.dropdown-toggle Gast
+              ul.dropdown-menu
+                li
+                  a Verander je naam
     .container.page
       .row
         .span12
@@ -27,21 +32,19 @@ html(lang="en", class="no-js")
             #map
         .span4
           .well
-            form.form-stacked(style="padding-left: 0")
+            form.form-stacked(style="padding: 0;margin:0;")
               fieldset
                 legend Hint:
-                label Dag:
-                select.span2
-                  option Zaterdag
-                  option Zondag
+                .alert-message.error
+                  p Buiten gebied!
                 label Hint-tijd:
                 input.mini(type='time')
                 label Coördinaat:
-                input.mini(type='text')
+                input.mini(type='number')
                 span ,
-                input.mini(type='text')
-                .actions
-                  input.btn.primary(type='submit', value='Aanmaken...')
+                input.mini(type='number')
+                
+              input.btn.primary(type='submit', value='Aanmaken...')
           strong Kies groep:
           .list
             .group.alpha
@@ -63,5 +66,6 @@ html(lang="en", class="no-js")
       !window.jQuery && document.write('<script src="/js/jquery-1.6.4.min.js"><\\/script>')
     //-link(rel="stylesheet", href="/css/ui-lightness/jquery-ui-1.8.5.custom.css")
     //-script(src="/js/jquery-ui-1.8.5.custom.min.js")
+    script(src="/js/bootstrap-dropdown.js")
     script(src="/js/polymaps.min.js")
     script(src="/js/application.js")

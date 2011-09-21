@@ -1,6 +1,8 @@
 
 var po,map;
 $(function(){
+  $('.topbar').dropdown();
+
   po = org.polymaps;
   map = po.map()
     .container(document.getElementById("map").appendChild(po.svg("svg")))
