@@ -1,0 +1,52 @@
+@import "lib/bootstrap.less";
+
+.hidden { display: none; }
+
+html, body {
+  background: #fff;
+}
+body {
+  margin-top: 60px;
+}
+.page.container {
+  background: #fff;
+}
+
+#map {
+  position: relative;
+  height: 600px;
+  border: solid 4px #CCC;
+
+  &.full {
+    position: fixed;
+    border-width: 0;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+  }
+}
+
+.group {
+	fill-opacity: 0;
+	stroke-width:2;
+}
+
+.alpha { fill: #00F; stroke:#00F; }
+.beta { fill: #800080; stroke:#800080; }
+.charlie { fill: #FF8000;	stroke:#FF8000; }
+.delta { fill: #FF0; stroke:#FF0; }
+.echo { fill: #F00; stroke:#F00; }
+.foxtrot { fill: #0C9400;	stroke:#0C9400; }
+
+
+.compass {
+  rect.back.fore { fill: #999; fill-opacity: .3; stroke: #eee; stroke-width: 1px; shape-rendering: crispEdges; }
+  .direction { fill: none; }
+  .chevron { fill: none; stroke: #999; stroke-width: 5px; }
+  .zoom .chevron { stroke-width: 4px; }
+  .active .chevron, .compass .chevron.active { stroke: #fff; }
+  .back { fill: #eee; fill-opacity: .8; }
+  .fore { stroke: #999; stroke-width: 1.5px; }
+}
+.compass.active .active .direction { fill: #999; }
