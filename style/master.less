@@ -1,5 +1,12 @@
 @import "lib/bootstrap.less";
 
+@alpha: #00F;
+@bravo:  #800080;
+@charlie: #FF8000;
+@delta: #FF0;
+@echo: #F00;
+@foxtrot: #0C9400;
+
 .hidden { display: none; }
 
 html, body {
@@ -12,41 +19,8 @@ body {
   background: #fff;
 }
 
-#map {
-  position: relative;
-  height: 600px;
-  border: solid 4px #CCC;
+@import "maps.less";
 
-  &.full {
-    position: fixed;
-    border-width: 0;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-  }
-}
-
-.group {
-	fill-opacity: 0;
-	stroke-width:2;
-}
-
-@alpha: #00F;
-@bravo:  #800080;
-@charlie: #FF8000;
-@delta: #FF0;
-@echo: #F00;
-@foxtrot: #0C9400;
-
-svg {
-  .alpha { fill: @alpha; stroke:@alpha; }
-  .bravo { fill: @bravo; stroke:@bravo; }
-  .charlie { fill: @charlie; stroke:@charlie; }
-  .delta { fill: @delta; stroke:@delta; }
-  .echo { fill: @echo; stroke:@echo; }
-  .foxtrot { fill: @foxtrot; stroke:@foxtrot; }
-}
 .list {
   .group {
     cursor: pointer;
@@ -58,21 +32,10 @@ svg {
     .user.self { text-decoration: underline; }
     &.chosen { border-left-style: dotted; }
   }
-  .alpha { border-color:@alpha; }
-  .bravo { border-color:@bravo; }
-  .charlie { border-color:@charlie; }
-  .delta { border-color:@delta; }
-  .echo { border-color:@echo; }
-  .foxtrot { border-color:@foxtrot; }
+  .alpha { border-color: @alpha; }
+  .bravo { border-color: @bravo; }
+  .charlie { border-color: @charlie; }
+  .delta { border-color: @delta; }
+  .echo { border-color: @echo; }
+  .foxtrot { border-color: @foxtrot; }
 }
-
-.compass {
-  rect.back.fore { fill: #999; fill-opacity: .3; stroke: #eee; stroke-width: 1px; shape-rendering: crispEdges; }
-  .direction { fill: none; }
-  .chevron { fill: none; stroke: #999; stroke-width: 5px; }
-  .zoom .chevron { stroke-width: 4px; }
-  .active .chevron, .compass .chevron.active { stroke: #fff; }
-  .back { fill: #eee; fill-opacity: .8; }
-  .fore { stroke: #999; stroke-width: 1.5px; }
-}
-.compass.active .active .direction { fill: #999; }
