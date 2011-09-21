@@ -1,8 +1,8 @@
 {
-  "name": "JotiHunt",
+  "name": "GeoCo",
   "version": "1.0.0",
   "description": "Realtime webapplicatie voor het bijhouden van coordinaten.",
-  "keywords": ["jotihunt", "realtime"],
+  "keywords": ["realtime"],
   "author": "Nanne Wielinga <nanne@mycel.nl>",
   "dependencies": {
     "jade": ">= 0.15.4",
