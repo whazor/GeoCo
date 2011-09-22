@@ -1,22 +1,20 @@
-# Template parser
-jade = require('jade')
 fs = require('fs')
 sys = require('sys')
 path = require('path')
-# Database
-mongoose = require('mongoose').Mongoose
-# less
+
+jade = require('jade')
 less = require('less')
-# Framework
+
 express = require('express')
 app = express.createServer()
-
+browserify = require('browserify')
 
 app.configure ->
   app.set('views', __dirname + '/views')
   app.set('view engine', 'jade')
   app.set('view options', {layout: false})
   app.use(express.static(__dirname + '/public'))
+  app.use browserify({entry: "#{__dirname}/lib/client.coffee", watch: true})
 
 uptime = 0
 app.get '/', (req, res) ->
