@@ -25,8 +25,8 @@ $ ->
 
   btnMapFullWindow = $ """
   <svg style="position: absolute; right: -16px; top: -16px; width: 32px; height: 32px; ">
-      <circle cx="16" cy="16" r="14" fill="#fff" stroke="#ccc" stroke-width="4" />
-      <path class="arrow" transform="translate(16,16)rotate(-45)scale(5)translate(-1.85,0)" d="M0,0L0,.5 2,.5 2,1.5 4,0 2,-1.5 2,-.5 0,-.5Z" pointer-events="none" fill="#aaa" />
+      <circle cx="16" cy="16" r="14" fill="#fff" stroke="#ddd" stroke-width="4" />
+      <path class="arrow" transform="translate(16,16)rotate(-45)scale(5)translate(-1.85,0)" d="M0,0L0,.5 2,.5 2,1.5 4,0 2,-1.5 2,-.5 0,-.5Z" pointer-events="none" fill="#bbb" />
   </svg>
   """
   
