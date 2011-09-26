@@ -1,24 +1,26 @@
-fs = require('fs')
-sys = require('sys')
-path = require('path')
+fs = require 'fs'
+sys = require 'sys'
+path = require 'path'
 
-jade = require('jade')
-less = require('less')
+#jade = require('jade')
+#ck = require 'coffeekup'
+less = require 'less'
 
-express = require('express')
+express = require 'express'
 app = express.createServer()
-browserify = require('browserify')
+browserify = require 'browserify'
 
 app.configure ->
   app.set('views', __dirname + '/views')
-  app.set('view engine', 'jade')
+  app.set 'view engine', 'coffee'
+  app.register '.coffee', require('coffeekup').adapters.express
   app.set('view options', {layout: false})
   app.use(express.static(__dirname + '/public'))
   app.use browserify({entry: "#{__dirname}/lib/client.coffee", watch: true})
 
 uptime = 0
 app.get '/', (req, res) ->
-  res.render 'index.jade'
+  res.render 'index.coffee'
 
 app.get '/css/*.*', (req, res) ->
   file = req.params[0] + '.less'
