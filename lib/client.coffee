@@ -4,20 +4,20 @@ $ ->
   # legacy code:
   $('.topbar').dropdown()
 
+  buttonless = $('#map').hasClass 'buttonless'
   po = org.polymaps
-  map = po.map()
+  window.map = po.map()
     .container($('#map')[0].appendChild(po.svg('svg')))
-    .add(po.interact())
     .center({lat: 52.1, lon: 5.924377})
     .zoom(9)
 
-  isFullWindow = false
+  map.add po.interact() unless buttonless
+  map.add po.compass().pan("none") unless buttonless
 
   map.add po.image()
     .url(po.url("http://{S}tile.cloudmade.com/60f28d6eca2e43828b5eccb000f2e226/1/256/{Z}/{X}/{Y}.png")
     .hosts(["a.", "b.", "c.", ""]))
 
-  map.add(po.compass().pan("none"))
 
   map.add po.geoJson().url("/deelgebieden.json").on "load", (e) ->
     for feature in e.features
@@ -30,8 +30,9 @@ $ ->
   </svg>
   """
   
+  isFullWindow = false
   fullWindow = ->
-    if(isFullWindow =! isFullWindow)
+    if(isFullWindow = !isFullWindow)
       btnMapFullWindow.css
         position: 'fixed'
         right: '16px'
@@ -46,9 +47,10 @@ $ ->
     $('.topbar').toggleClass('hidden', isFullWindow)
     $('#map').toggleClass('full', isFullWindow)
     map.resize()
+
   btnMapFullWindow.bind 'mousedown', fullWindow
   $(window).bind 'keydown', (e) ->
     fullWindow() if e.keyCode == 27 and isFullWindow
     return true
 
-  $('#map').append(btnMapFullWindow)
+  $('#map').append(btnMapFullWindow) unless buttonless
