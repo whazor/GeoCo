@@ -7,12 +7,12 @@ div '#modal.modal', ->
     h4 style: 'float:right', -> 'GeoCo'
     h3 'Inloggen'
 
-  div '.modal-body', ->
-    form '.form-stacked', ->
+  form '.form-stacked', style: 'padding:0;margin:0', method: 'post', action: '/authenticate', ->
+    div '.modal-body', ->
       label 'Jouw naam:'
       input type: 'text'
 
       label 'Site wachtwoord:'
       input type: 'password'
-  div '.modal-footer', ->
-    button '.btn.primary', -> 'Inloggen'
+    div '.modal-footer', ->
+      button '.btn.primary', -> 'Inloggen'

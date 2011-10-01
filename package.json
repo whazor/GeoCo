@@ -5,7 +5,7 @@
   "keywords": ["realtime"],
   "author": "Nanne Wielinga <nanne@mycel.nl>",
   "dependencies": {
-    "mongodb": ">= 0.9.6-18",
+    "mongoose": ">= 2.2.3",
     "coffeekup": ">= 0.3.0",
     "less": ">= 1.1.3",
     "coffee-script": ">= 0.15.4",

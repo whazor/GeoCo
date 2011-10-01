@@ -1,13 +1,31 @@
 sys = require 'sys'
 
-mongodb = require 'mongodb'
 express = require 'express'
 app = express.createServer()
 browserify = require 'browserify'
 
-# Configure mongodb
-client = new mongodb.Db 'jotihunt', new mongodb.Server('127.0.0.1', 27017, {}), ->
+mongoose = require 'mongoose'
+Schema = mongoose.Schema
+db = mongoose.createConnection('mongodb://localhost/jotihunt')
 
+FoxGroupSchema = new Schema
+  name: String
+
+UserSchema = new Schema
+  name: String
+  ip: String
+
+HintSchema = new Schema
+  solver: {type: Schema.ObjectId, ref: 'User'}
+  loc: {x: Number, y: Number} # RND
+  cache_loc: String # lat, lang
+  fox_group: {type: Schema.ObjectId, ref: 'FoxGroup'}
+  time: String # TODO
+HintSchema.index {loc: '2d'}
+
+FoxGroup = db.model 'FoxGroup', FoxGroupSchema
+User = db.model 'User', UserSchema
+Hint = db.model 'Hint', HintSchema
 
 # Configure website
 app.configure ->
@@ -29,10 +47,32 @@ app.configure ->
 
 app.configure 'production', -> app.use express.errorHandler()
 
+auth = (req, res, next) ->
+  return next() #TODO: remove
+  logged_in = false
+
+  user = req.session.user
+  if user
+    User.findById user, (err, doc) ->
+      return if err
+      logged_in = true
+      next()
+
+  res.redirect '/login' unless logged_in
+
 # Route to index
-app.get '/', (req, res) -> res.render 'index'
+app.get '/', auth, (req, res) ->
+  if req.session.user
+    res.render 'index'
+  else
+    res.redirect '/login'
 
 app.get '/login', (req, res) -> res.render 'login'
+
+app.post '/authenticate', (req, res) ->
+  User.findOne {}
+  req.session.user = true
+  res.redirect '/'
 
 # Less
 fs = require 'fs'
