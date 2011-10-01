@@ -18,7 +18,10 @@ app.configure ->
   #app.set 'view options', {layout: 'layout'}
 
   app.use express.static(__dirname + '/public')
-  app.use browserify({entry: "#{__dirname}/lib/client.coffee", watch: true})
+  app.use browserify
+    mount: '/app.js'
+    entry: "#{__dirname}/lib/client.coffee"
+    watch: true
   app.use express.cookieParser()
   app.use express.session({ secret: "HIERMOETRANDOMKEYKOMEN" })
 

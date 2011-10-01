@@ -9,5 +9,5 @@ html ->
     script src:"/js/jquery-1.6.4.min.js"
     script src:"/js/bootstrap-dropdown.js"
     script src:"/js/polymaps.min.js"
-    script src:"/browserify.js"
+    script src:"/app.js"
   body -> @body
