@@ -18,18 +18,33 @@ div '.hintform.popover.left', style: 'z-index: 10001', ->
     h3 '.title', -> 'Alpha - 14:00'
     form '.form-stacked.content', style: 'padding:0;margin:0', method: 'post', action: '/hints', ->
       div '.modal-body', ->
-        label 'Soort:'
-        select ->
-          option 'Rijksdriehoekscoördinaten'
-          option 'Geografische coördinaten'
-          option 'Adres'
-        label 'Coördinaat:'
-        input '.mini', maxlength: 6
+        coffeescript ->
+          $ ->
+            $('.hintform .cancel').bind 'click', (event) ->
+              event.preventDefault()
+              $('.hintform').hide()
+            $('.hinttype').bind 'change', (event) ->
+              none = $(this).val() == 'none'
+              $('.coordinate').toggleClass 'hidden', $(this).val() == 'address' or none
+              $('.address').toggleClass 'hidden', $(this).val() != 'address' or none
 
-        span ','
-        input '.mini', maxlength: 6
-        span ' '
-        button '.btn.small', -> 'Inactief'
+        label 'Soort:'
+        select '.hinttype', ->
+          option value: 'rdc', -> 'Rijksdriehoekscoördinaten'
+          option value: 'latlng', -> 'Geografische coördinaten'
+          option value: 'address', -> 'Adres'
+          option value: 'none', -> 'Geen'
+        div '.coordinate', ->
+          label 'Coördinaat:'
+          input '.mini', maxlength: 6
+
+          span ','
+          input '.mini', maxlength: 6
+        div '.address.hidden', ->
+          label 'Adres:'
+          input type: 'text'
+
+
       div '.modal-footer', ->
         button '.btn.primary', -> 'Toevoegen'
         button '.btn.cancel', -> 'Annuleren'
@@ -63,9 +78,6 @@ div '.container.page', ->
             form.toggleClass 'left', form.hasClass('ui-flipped-left')
             form.toggleClass 'right', !form.hasClass('ui-flipped-left')
             i = parseInt $(this).data('time') - 1
-            $('.hintform .cancel').bind 'click', (event) ->
-              event.preventDefault()
-              $('.hintform').hide()
             $('.hintform .title').text("#{$(this).data('group')} - #{(9+i) % 24}:00")
             console.log $(this).data('time')
             #alert 'test'

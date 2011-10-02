@@ -53,8 +53,7 @@ $ ->
         right: '-16px'
         top: '-16px'
       btnMapFullWindow.find('.arrow').attr("transform","translate(16,16)rotate(-45)scale(5)translate(-1.85,0)");
-    $('.topbar').toggleClass('hidden', isFullWindow)
-    $('#map').toggleClass('full', isFullWindow)
+    $('#map').toggleClass 'full', isFullWindow
     map.resize()
 
   btnMapFullWindow.bind 'mousedown', fullWindow
