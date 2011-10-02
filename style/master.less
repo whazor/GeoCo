@@ -27,15 +27,8 @@ body {
 }
 
 table.scroll {
-  //overflow: hidden;
-  &.scroll-head {
-    margin-bottom: 0;
-    .border-bottom-radius(0px);
-    border-bottom: 0;
-  }
-  &.scroll-body {
-    .border-top-radius(0px);
-    border-top: 0;
+  thead {  
+    display: block;
   }
   tbody {
     overflow-y: auto;

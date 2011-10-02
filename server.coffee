@@ -4,29 +4,7 @@ express = require 'express'
 app = express.createServer()
 browserify = require 'browserify'
 
-mongoose = require 'mongoose'
-Schema = mongoose.Schema
-db = mongoose.createConnection('mongodb://localhost/jotihunt')
-
-FoxGroupSchema = new Schema
-  name: String
-
-UserSchema = new Schema
-  name: String
-  ip: String
-
-HintSchema = new Schema
-  solver: {type: Schema.ObjectId, ref: 'User'}
-  loc_rnd: {x: Number, y: Number} # RND, numbers for calculation
-  loc_lng: {x: Number, y: Number} # lat, lang
-  fox_group: {type: Schema.ObjectId, ref: 'FoxGroup'}
-  time: String # TODO
-  year: {type: Number, default: new Date().getFullYear()}
-HintSchema.index {loc_lnd: '2d'}
-
-FoxGroup = db.model 'FoxGroup', FoxGroupSchema
-User = db.model 'User', UserSchema
-Hint = db.model 'Hint', HintSchema
+db = require './lib/scheme'
 
 # Configure website
 app.configure ->
@@ -55,7 +33,7 @@ auth = (req, res, next) ->
 
   user = req.session.user
   if user
-    User.findById user, (err, doc) ->
+    db.User.findById user, (err, doc) ->
       return if err
       logged_in = true
       next()
@@ -71,7 +49,7 @@ app.post '/hints', auth, (req, res) ->
 
 
 app.get '/hints.json', auth, (req, res) ->
-  Hint.find {}, (err, docs) ->
+  db.Hint.find {}, (err, docs) ->
     hints = []
     for doc in docs
       hints << {
