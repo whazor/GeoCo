@@ -17,11 +17,12 @@ UserSchema = new Schema
 
 HintSchema = new Schema
   solver: {type: Schema.ObjectId, ref: 'User'}
-  loc: {x: Number, y: Number} # RND
-  cache_loc: String # lat, lang
+  loc_rnd: {x: Number, y: Number} # RND, numbers for calculation
+  loc_lng: {x: Number, y: Number} # lat, lang
   fox_group: {type: Schema.ObjectId, ref: 'FoxGroup'}
   time: String # TODO
-HintSchema.index {loc: '2d'}
+  year: {type: Number, default: new Date().getFullYear()}
+HintSchema.index {loc_lnd: '2d'}
 
 FoxGroup = db.model 'FoxGroup', FoxGroupSchema
 User = db.model 'User', UserSchema
