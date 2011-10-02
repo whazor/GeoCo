@@ -1,6 +1,6 @@
 coffeescript -> $ -> map.zoom 9.5
-div '#map.full.buttonless', -> ""
-div '.modal-backdrop', -> ""
+div '#map.full.buttonless', ->
+div '.modal-backdrop', ->
 
 div '#modal.modal', ->
   div '.modal-header', ->
