@@ -10,18 +10,27 @@ $ ->
     .container($('#map')[0].appendChild(po.svg('svg')))
     .center({lat: 52.1, lon: 5.924377})
     .zoom(9)
-
-  map.add po.interact() unless buttonless
-  map.add po.compass().pan("none") unless buttonless
+  
+  unless buttonless
+    map.add po.drag()
+    map.add po.wheel()
+    map.add po.dblclick()
+    map.add po.compass().pan("none")
 
   map.add po.image()
     .url(po.url("http://{S}tile.cloudmade.com/60f28d6eca2e43828b5eccb000f2e226/1/256/{Z}/{X}/{Y}.png")
     .hosts(["a.", "b.", "c.", ""]))
 
 
-  map.add po.geoJson().url("/deelgebieden.json").on "load", (e) ->
+  map.add po.geoJson().url('/deelgebieden.json').on "load", (e) ->
     for feature in e.features
       feature.element.setAttribute('class', "group #{feature.data.id}")
+
+  map.add po.geoJson().url('/hints.json')#.on 'load', (e) ->
+  #for feature in e.features
+  #  feature.element.setAttribute('class', "group #{feature.data.id}")
+
+
 
   btnMapFullWindow = $ """
   <svg style="position: absolute; right: -16px; top: -16px; width: 32px; height: 32px; ">

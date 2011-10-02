@@ -41,6 +41,7 @@ app.configure ->
     mount: '/app.js'
     entry: "#{__dirname}/lib/client.coffee"
     watch: true
+    #filter: require('uglify-js')
   app.use express.cookieParser()
   app.use express.session({ secret: "HIERMOETRANDOMKEYKOMEN" })
 
@@ -61,12 +62,27 @@ auth = (req, res, next) ->
 
   res.redirect '/login' unless logged_in
 
-# Route to index
+# Route to index]
 app.get '/', auth, (req, res) ->
-  if req.session.user
-    res.render 'index'
-  else
-    res.redirect '/login'
+  res.render 'index'
+
+app.post '/hints', auth, (req, res) ->
+  res.redirect '/'
+
+
+app.get '/hints.json', auth, (req, res) ->
+  Hint.find {}, (err, docs) ->
+    hints = []
+    for doc in docs
+      hints << {
+        type: 'Feature'
+        geometry:
+          type: 'Point'
+          coordinates: [doc.loc_lng.x, doc.loc_lng.y]
+      }
+    res.send
+      type: 'FeatureCollection'
+      features: hints
 
 app.get '/login', (req, res) -> res.render 'login'
 
