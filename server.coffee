@@ -7,6 +7,8 @@ browserify = require 'browserify'
 db = require './lib/scheme'
 
 # Configure website
+password = "test123" # TODO: change?
+
 app.configure ->
   app.register '.coffee', require('coffeekup').adapters.express
 
@@ -21,6 +23,7 @@ app.configure ->
     watch: true
     #filter: require('uglify-js')
   app.use express.cookieParser()
+  app.use express.bodyParser()
   app.use express.session({ secret: "HIERMOETRANDOMKEYKOMEN" })
 
   app.use express.errorHandler({ dumpExceptions: true, showStack: true })
@@ -28,25 +31,19 @@ app.configure ->
 app.configure 'production', -> app.use express.errorHandler()
 
 auth = (req, res, next) ->
-  return next() #TODO: remove
-  logged_in = false
-
   user = req.session.user
-  if user
-    db.User.findById user, (err, doc) ->
-      return if err
-      logged_in = true
+  db.User.findById user, (err, doc) ->
+    if !err and doc != null
       next()
+    else
+      res.redirect '/login'
 
-  res.redirect '/login' unless logged_in
-
-# Route to index]
+# Route to index
 app.get '/', auth, (req, res) ->
   res.render 'index'
 
-app.post '/hints', auth, (req, res) ->
-  res.redirect '/'
 
+app.post '/hints', auth, (req, res) -> res.redirect '/'
 
 app.get '/hints.json', auth, (req, res) ->
   db.Hint.find {}, (err, docs) ->
@@ -63,11 +60,28 @@ app.get '/hints.json', auth, (req, res) ->
       features: hints
 
 app.get '/login', (req, res) -> res.render 'login'
+app.get '/logout', auth, (req, res) ->
+  req.session.user = false
+  res.redirect '/'
 
 app.post '/authenticate', (req, res) ->
-  User.findOne {}
-  req.session.user = true
-  res.redirect '/'
+  if req.body.password != password
+    res.redirect '/login#fail'
+    return
+
+  db.User.findOne {'name': req.body.name}, (err, doc) ->
+    if !err and doc != null
+      req.session.user = doc._id
+      res.redirect '/'
+      return
+
+    user = new db.User
+      name: req.body.name
+      ip: req.socket.remoteAddress
+
+    user.save (err) ->
+      req.session.user = user._id
+      res.redirect '/'
 
 # Less
 fs = require 'fs'

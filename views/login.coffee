@@ -1,4 +1,9 @@
-coffeescript -> $ -> map.zoom 9.5
+coffeescript ->
+  $ ->
+    if window.location.hash == '#fail'
+      $('#password').addClass 'error'
+
+    map.zoom 9.5
 div '#map.full.buttonless', ->
 div '.modal-backdrop', ->
 
@@ -9,10 +14,12 @@ div '#modal.modal', ->
 
   form '.form-stacked', style: 'padding:0;margin:0', method: 'post', action: '/authenticate', ->
     div '.modal-body', ->
-      label 'Jouw naam:'
-      input type: 'text'
+      div '#username.clearfix', ->
+        label 'Jouw naam:'
+        input name: 'name', type: 'text'
 
-      label 'Site wachtwoord:'
-      input type: 'password'
+      div '#password.clearfix', ->
+        label 'Site wachtwoord:'
+        input name: 'password', type: 'password'
     div '.modal-footer', ->
       button '.btn.primary', -> 'Inloggen'
