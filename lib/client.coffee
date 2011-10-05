@@ -38,7 +38,7 @@ $ ->
       <path class="arrow" transform="translate(16,16)rotate(-45)scale(5)translate(-1.85,0)" d="M0,0L0,.5 2,.5 2,1.5 4,0 2,-1.5 2,-.5 0,-.5Z" pointer-events="none" fill="#bbb" />
   </svg>
   """
-  
+
   isFullWindow = false
   fullWindow = ->
     if(isFullWindow = !isFullWindow)
@@ -46,13 +46,13 @@ $ ->
         position: 'fixed'
         right: '16px'
         top: '16px'
-      btnMapFullWindow.find('.arrow').attr("transform","translate(16,16)rotate(135)scale(5)translate(-1.85,0)");
+      btnMapFullWindow.find('.arrow').attr("transform","translate(16,16)rotate(135)scale(5)translate(-1.85,0)")
     else
       btnMapFullWindow.css
         position: 'absolute'
         right: '-16px'
         top: '-16px'
-      btnMapFullWindow.find('.arrow').attr("transform","translate(16,16)rotate(-45)scale(5)translate(-1.85,0)");
+      btnMapFullWindow.find('.arrow').attr("transform","translate(16,16)rotate(-45)scale(5)translate(-1.85,0)")
     $('#map').toggleClass 'full', isFullWindow
     map.resize()
 
