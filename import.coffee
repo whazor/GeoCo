@@ -30,7 +30,7 @@ h = http.get options, (res) ->
 
           str_time = [0, 0, 0] unless str_time
 
-          date = new Date str_date[2], str_date[1], str_date[0], str_time[0], str_time[1], str_time[2]
+          date = new Date str_date[2], str_date[1] - 1, str_date[0], str_time[0], str_time[1], str_time[2]
           groups = coordinate.content.$t.split ', '
           for group in groups when group != ''
             [name, loc] = group.split ': '
