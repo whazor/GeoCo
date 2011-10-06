@@ -13,7 +13,7 @@ module.exports = class
       @.close()
 
   position: ->
-    return if @popup.hasClass 'hidden'
+    return unless @popup.is ":visible"
     @popup.position
       of: $ @object
       my: 'left center'
