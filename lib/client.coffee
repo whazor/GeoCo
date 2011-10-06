@@ -23,13 +23,21 @@ $ ->
     .hosts(["a.", "b.", "c.", ""]))
 
 
-  map.add po.geoJson().url('/deelgebieden.json').on "load", (e) ->
+  map.add po.geoJson().url('/deelgebieden_2010.json').on "load", (e) ->
     for feature in e.features
-      feature.element.setAttribute('class', "group #{feature.data.id}")
+      feature.element.setAttribute 'class', "group #{feature.data.id}"
 
-  map.add po.geoJson().url('/hints.json')#.on 'load', (e) ->
-  #for feature in e.features
-  #  feature.element.setAttribute('class', "group #{feature.data.id}")
+  map.add po.geoJson().url('/hints.json').on 'load', (e) ->
+    for feature in e.features
+      properties = feature.data.geometry.properties
+      if properties.type == 'Hint'
+        feature.element.setAttribute 'class', 'hint'
+        feature.element.setAttribute 'r', 3#Math.pow(2, tile.zoom - 11) * Math.sqrt(mean.size)
+        $(feature.element).bind 'click', (e) -> alert 'test'
+
+      else if properties.type == 'Line'
+        feature.element.setAttribute 'class', 'line'
+
 
 
 

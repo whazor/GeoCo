@@ -50,18 +50,32 @@ app.get '/', auth, (req, res) ->
 
 app.post '/hints', auth, (req, res) -> res.redirect '/'
 
-app.get '/hints.json', auth, (req, res) ->
+app.get '/hints.json', (req, res) ->
   db.Hint.find {}, (err, docs) ->
-    hints = []
+    groups = {}
+    features = []
     for doc in docs
-      hints.push
+      groups[doc.fox_group] ||= []
+      groups[doc.fox_group].push [doc.longlat.y, doc.longlat.x]
+      features.push
         type: 'Feature'
         geometry:
           type: 'Point'
-          coordinates: [doc.longlat.x, doc.longlat.y]
+          coordinates: [doc.longlat.y, doc.longlat.x]
+          properties:
+            id: doc._id
+            type: 'Hint'
+    for name, group of groups
+      features.push
+        type: 'Feature'
+        geometry:
+          type: 'LineString'
+          coordinates: group
+          properties: {type: 'Line'}
+
     res.send
       type: 'FeatureCollection'
-      features: hints
+      features: features
 
 app.get '/login', (req, res) -> res.render 'login'
 app.get '/logout', auth, (req, res) ->
