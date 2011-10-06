@@ -13,7 +13,8 @@ div '.topbar', ->
             li -> a 'Verander je naam'
 
 # Popup
-partial 'partials/hintpopup'
+partial 'partials/hintform'
+partial 'partials/hintpoint'
 
 # Pagina
 div '.container.page', ->

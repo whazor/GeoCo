@@ -19,7 +19,7 @@ coffeescript -> $ ->
 
   timeout = false
   autoposition = (event) ->
-    clearInterval timeout
+    clearTimeout timeout
     timeout = setTimeout (-> popup.position()), 50
   $('#hints tbody').bind 'scroll', autoposition
   $(window).bind 'resize', autoposition

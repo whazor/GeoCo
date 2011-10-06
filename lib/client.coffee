@@ -32,8 +32,9 @@ $ ->
       properties = feature.data.geometry.properties
       if properties.type == 'Hint'
         feature.element.setAttribute 'class', 'hint'
-        feature.element.setAttribute 'r', 3#Math.pow(2, tile.zoom - 11) * Math.sqrt(mean.size)
-        $(feature.element).bind 'click', (e) -> alert 'test'
+        feature.element.setAttribute 'r', 5#Math.pow(2, tile.zoom - 11) * Math.sqrt(mean.size)
+        $(feature.element).data 'id', properties.id
+        $(feature.element).bind 'click', hintClick
 
       else if properties.type == 'Line'
         feature.element.setAttribute 'class', 'line'

@@ -44,13 +44,18 @@ app.all '/*', (req, res, next) ->
   next()
 
 # Route to index
-app.get '/', auth, (req, res) ->
-  res.render 'index'
+app.get '/', auth, (req, res) -> res.render 'index'
 
 
 app.post '/hints', auth, (req, res) -> res.redirect '/'
 
-app.get '/hints.json', (req, res) ->
+app.get '/hint/:id', auth, (req, res) ->
+  db.Hint.findById(req.params.id).populate('solver').run  (err, doc) ->
+    return if err
+    res.local 'doc', doc
+    res.render 'hint', {layout: false}
+
+app.get '/hints.json', auth, (req, res) ->
   db.Hint.find {}, (err, docs) ->
     groups = {}
     features = []
