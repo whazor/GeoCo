@@ -2,11 +2,11 @@ module.exports = class
   constructor: (@popup) ->
     @popup.addClass 'popover left'
     @popup.css zIndex: 10001
-    inner = @popup.html()
-    @popup.html('')
+    @html = @popup.html()
+    @popup.html ''
     @popup.append $('<div class="arrow" />')
-    @popup.append $('<div class="inner" />').html(inner)
-
+    @inner = $('<div class="inner" />').html @html
+    @popup.append @inner
     @.close()
     $('.cancel', @popup).bind 'click', (event) =>
       event.preventDefault()
@@ -24,6 +24,7 @@ module.exports = class
     @popup.toggleClass 'right', !is_flipped
 
   show: (@object, dataFunc) ->
+    @inner.html @html
     @popup.show()
     @.position()
     dataFunc @popup
