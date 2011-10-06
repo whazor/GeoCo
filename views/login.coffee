@@ -4,7 +4,7 @@ coffeescript ->
       $('#password').addClass 'error'
 
     map.zoom 9.5
-div '#map.full.buttonless', ->
+div '#map.full.buttonless.background', ->
 div '.modal-backdrop', ->
 
 div '#modal.modal', ->
