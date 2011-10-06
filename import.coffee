@@ -34,7 +34,7 @@ h = http.get options, (res) ->
           groups = coordinate.content.$t.split ', '
           for group in groups when group != ''
             [name, loc] = group.split ': '
-            continue if group == 'x'
+            continue if name == 'x'
 
             [x, y] = loc.split ';'
             [x, y] = [parseFloat(x), parseFloat(y)]
