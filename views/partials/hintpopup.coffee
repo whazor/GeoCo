@@ -1,14 +1,21 @@
 coffeescript -> $ ->
-  window.popup = new Popup $ '.hintform'
+  popup = new Popup $ '.hintform'
   # Popup opener
   $('#hints .btn').bind 'click', ->
     return unless $(this).data('group')
 
-    popup.show $(this), (popup) =>
+    popup.show $(this), (selector) =>
       time = 9 + (parseInt $(this).data('time') - 1) % 24
       group = $(this).data 'group'
 
-      $('.title', popup).text "#{group} - #{time}:00"
+      $('.title', selector).text "#{group} - #{time}:00"
+
+      # Rest of the javascript
+      $('.hinttype', selector).bind 'change', (event) ->
+        none = $(this).val() == 'none'
+        $('.coordinate').toggleClass 'hidden', $(this).val() == 'address' or none
+        $('.address').toggleClass 'hidden', $(this).val() != 'address' or none
+        popup.position()
 
   interval = false
   autoposition = (event) ->
@@ -18,13 +25,7 @@ coffeescript -> $ ->
   $(window).bind 'resize', autoposition
 
 div '.hintform', ->
-  coffeescript -> $ ->
-    $('.hinttype').bind 'change', (event) ->
-      none = $(this).val() == 'none'
-      $('.coordinate').toggleClass 'hidden', $(this).val() == 'address' or none
-      $('.address').toggleClass 'hidden', $(this).val() != 'address' or none
-      popup.position()
-  h3 '.title', -> 'Alpha - 14:00'
+  h3 '.title', -> 'Popup'
   form '.form-stacked.content', style: 'padding:0;margin:0', method: 'post', action: '/hints', ->
     div '.modal-body', ->
 
