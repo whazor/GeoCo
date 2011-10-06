@@ -54,12 +54,11 @@ app.get '/hints.json', auth, (req, res) ->
   db.Hint.find {}, (err, docs) ->
     hints = []
     for doc in docs
-      hints << {
+      hints.push
         type: 'Feature'
         geometry:
           type: 'Point'
-          coordinates: [doc.loc_lng.x, doc.loc_lng.y]
-      }
+          coordinates: [doc.longlat.x, doc.longlat.y]
     res.send
       type: 'FeatureCollection'
       features: hints
