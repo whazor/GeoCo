@@ -17,10 +17,10 @@ coffeescript -> $ ->
         $('.address').toggleClass 'hidden', $(this).val() != 'address' or none
         popup.position()
 
-  interval = false
+  timeout = false
   autoposition = (event) ->
-    clearInterval interval
-    interval = setInterval (-> popup.position()), 50
+    clearInterval timeout
+    timeout = setTimeout (-> popup.position()), 50
   $('#hints tbody').bind 'scroll', autoposition
   $(window).bind 'resize', autoposition
 
