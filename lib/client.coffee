@@ -1,9 +1,10 @@
 # Hier kunnen requires komen!! :D
-
+window.Popup = require('./popup')
 $ ->
   # legacy code:
   $('.topbar').dropdown()
 
+  # Kaart
   buttonless = $('#map').hasClass 'buttonless'
   po = org.polymaps
   window.map = po.map()
