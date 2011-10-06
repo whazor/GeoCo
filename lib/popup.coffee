@@ -5,9 +5,13 @@ module.exports = class
     @html = @popup.html()
     @popup.html ''
     @popup.append $('<div class="arrow" />')
-    @inner = $('<div class="inner" />').html @html
+    @inner = $('<div class="inner" />')
     @popup.append @inner
     @.close()
+    @.redraw()
+
+  redraw: ->
+    @inner.html @html
     $('.cancel', @popup).bind 'click', (event) =>
       event.preventDefault()
       @.close()
@@ -25,10 +29,11 @@ module.exports = class
     @popup.toggleClass 'right', !is_flipped
 
   show: (@object, dataFunc) ->
-    @inner.html @html
+    @.redraw()
     @popup.show()
     @.position()
     dataFunc @popup
+
   close: -> @popup.hide()
 
 
