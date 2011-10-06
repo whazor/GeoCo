@@ -15,7 +15,7 @@ class Geographic extends Coordinate
     @y = Math.roundfloat(@y, 7)
     @radius = 0
 
-  to_triangular: ->
+  toTriangular: ->
     f = @x; l = @y
     console.log [f,l]
     fmin = 6; fsec = 9.1
@@ -84,7 +84,7 @@ class Triangular extends Coordinate
     @x = extend_number(@x)
     @y = extend_number(@y)
     @radius = 0
-  to_geographic: ->
+  toGeographic: ->
     x0 = 155000.000;y0 = 463000.000
     f0 = 52.156160556;l0 =  5.387638889
     a01 =3236.0331637;b10 =5261.3028966
@@ -144,8 +144,11 @@ class Triangular extends Coordinate
     g.radius = @radius
     return g
 
-t = new Triangular(21705, 45753)
-console.log t
-console.log t.to_geographic()
-console.log t.to_geographic().to_triangular()
+exports.Geographic = Geographic
+exports.Triangular = Triangular
+
+#t = new Triangular(21705, 45753)
+#console.log t
+#console.log t.toGeographic()
+#console.log t.toGeographic().toTriangular()
 

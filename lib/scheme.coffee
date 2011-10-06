@@ -1,6 +1,6 @@
 mongoose = require 'mongoose'
 db = mongoose.createConnection 'mongodb://localhost/jotihunt'
-
+cords = require './cords'
 #FoxGroupSchema = new Schema
 #  name:
 #    type: String, required: true
@@ -15,21 +15,30 @@ UserSchema = new Schema
 HintSchema = new Schema
   solver:
     type: Schema.ObjectId, ref: 'User', required: true
-  loc_rdc:
-    type: (x: Number, y: Number), required: true # RDC, numbers for calculation
-  loc_lng:
+  location:
+    type: (sort: String, value: Schema.Types.Mixed), required: true
+  longlat:
     type: (x: Number, y: Number), required: true # lat, lang,
-  loc_address:
-    type: String, required: true
   fox_group:
-    type: String, required: true#type: Schema.ObjectId, ref: 'FoxGroup', required: true
+    type: String, required: true
   time:
     type: Date, required: true
 
-HintSchema.index loc_lnd: '2d'
+HintSchema.index longlat: '2d'
 HintSchema.pre 'save', (next) ->
-  if !@loc_lng and !@log_rdc and !@loc_address
-    next(new mongoose.Error('something went wrong'))
+  return unless @location
+  switch @location.sort.toLowerCase()
+    when 'address'
+      @longlat = {x: 1, y: 1}
+      next()
+    when 'longlat'
+      @longlat = @location.value
+      next()
+    when 'rdh'
+      t = new cords.Triangular @location.value.x, @location.value.y
+      g = t.toGeographic()
+      @longlat = {x: g.x, y: g.y}
+      next()
 
 
 #exports.FoxGroup = db.model 'FoxGroup', FoxGroupSchema
