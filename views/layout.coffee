@@ -11,4 +11,5 @@ html ->
     script src:"/js/bootstrap-dropdown.js"
     script src:"/js/polymaps.min.js"
     script src:"/app.js"
+    script "window.loggedin = #{@loggedin};"
   body -> @body
