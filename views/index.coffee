@@ -4,8 +4,8 @@ div '.topbar', ->
     div '.container', ->
       a '.brand', -> 'jotihunt.mycel.nl'
       ul '.nav', ->
-        li -> a '2011'
-        li -> a '2010'
+        li -> a href: '/',-> '2011'
+        li -> a href: '/?#2010',-> '2010'
       ul '.pull-right.nav.secondary-nav', ->
         li '.dropdown', ->
           a '.dropdown-toggle', -> 'Gast'
@@ -70,12 +70,12 @@ div '.container.page', ->
       table '.scroll.scroll-head', ->
         thead ->
           tr ->
-            th '.width.blue',-> 'Alpha'
-            th '.width.purple',-> 'Bravo'
-            th '.width.orange',-> 'Charlie'
-            th '.width.yellow',-> 'Delta'
-            th '.width.green',-> 'Echo'
-            th '.width.red',-> 'Foxtrot'
+            th '.width.red',-> 'Alpha'
+            th '.width.green',-> 'Bravo'
+            th '.width.blueDark',-> 'Charlie'
+            th '.width.blue',-> 'Delta'
+            th '.width.purple',-> 'Echo'
+            th '.width.yellow',-> 'Foxtrot'
             th '.full-width', -> 'Tijd:'
 
 
