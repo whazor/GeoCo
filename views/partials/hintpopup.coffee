@@ -19,9 +19,11 @@ coffeescript ->
       popup.position()
 
     interval = false
-    $('#hints tbody').bind 'scroll', (event) ->
+    autoposition = (event) ->
       clearInterval interval
-      interval = setInterval (-> popup.position()), 10
+      interval = setInterval (-> popup.position()), 50
+    $('#hints tbody').bind 'scroll', autoposition
+    $(window).bind 'resize', autoposition
 
 div '.hintform', ->
   h3 '.title', -> 'Alpha - 14:00'
