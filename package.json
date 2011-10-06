@@ -5,6 +5,7 @@
   "keywords": ["realtime"],
   "author": "Nanne Wielinga <nanne@mycel.nl>",
   "dependencies": {
+    "ent": "0.0.4",
     "mongoose": ">= 2.2.3",
     "coffeekup": ">= 0.3.0",
     "less": ">= 1.1.3",

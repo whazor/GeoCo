@@ -1,6 +1,7 @@
 mongoose = require 'mongoose'
 db = mongoose.createConnection 'mongodb://localhost/jotihunt'
 cords = require './cords'
+ent = require 'ent'
 #FoxGroupSchema = new Schema
 #  name:
 #    type: String, required: true
@@ -8,9 +9,13 @@ cords = require './cords'
 Schema = mongoose.Schema
 UserSchema = new Schema
   name:
-    type: String, required: true
+    type: String
+    required: true
+    set: (string) -> ent.encode string
   ip:
-    type: String, required: true
+    type: String
+    required: true
+    set: (string) -> ent.encode string
 
 HintSchema = new Schema
   solver:
@@ -20,7 +25,9 @@ HintSchema = new Schema
   longlat:
     type: (x: Number, y: Number), required: true # lat, lang,
   fox_group:
-    type: String, required: true
+    type: String
+    required: true
+    set: (string) -> ent.encode string
   time:
     type: Date, required: true
 
