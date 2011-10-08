@@ -8,9 +8,9 @@ div '.topbar', ->
         li -> a href: '/?#2010',-> '2010'
       ul '.pull-right.nav.secondary-nav', ->
         li '.dropdown', ->
-          a '.dropdown-toggle', -> 'Gast'
+          a '.dropdown-toggle', -> @username
           ul '.dropdown-menu', ->
-            li -> a 'Verander je naam'
+            li -> a href: '/logout', -> 'Uitloggen'
 
 # Popup
 partial 'partials/hintform'

@@ -35,12 +35,14 @@ auth = (req, res, next) ->
   db.User.findById user, (err, doc) ->
     if !err and doc != null
       res.local 'loggedin', true
+      res.local 'username', doc.name
       next()
     else
       res.redirect '/login'
 
 app.all '/*', (req, res, next) ->
   res.local 'loggedin', false
+  res.local 'username', 'Gast'
   next()
 
 # Route to index
