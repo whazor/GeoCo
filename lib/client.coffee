@@ -1,6 +1,8 @@
 # Hier kunnen requires komen!! :D
 window.Popup = require('./popup')
+window.Hints = require('./hints')
 $ ->
+  console.log year
   # legacy code:
   $('.topbar').dropdown()
 

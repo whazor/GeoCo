@@ -8,6 +8,9 @@ db = require './lib/scheme'
 
 # Configure website
 password = "test123" # TODO: change?
+begin = new Date 2011, 9, 16, 9, 0, 0
+console.log begin
+howlong = 30
 
 app.configure ->
   app.register '.coffee', require('coffeekup').adapters.express
@@ -46,7 +49,12 @@ app.all '/*', (req, res, next) ->
   next()
 
 # Route to index
-app.get '/', auth, (req, res) -> res.render 'index'
+app.get '/', auth, (req, res) ->
+  db.Hint.find {}, (err, docs) ->
+    res.local 'begin', begin
+    res.local 'howlong', howlong
+    res.local 'hints', docs
+    res.render 'index'
 
 
 app.post '/hints', auth, (req, res) -> res.redirect '/'
@@ -58,7 +66,22 @@ app.get '/hint/:id', auth, (req, res) ->
     res.render 'hint', {layout: false}
 
 app.get '/hints.json', auth, (req, res) ->
-  db.Hint.find {}, (err, docs) ->
+  db.Hint.find({}).sort('time', 1).exec (err, docs) ->
+    cords = []
+    for doc in docs
+      time = Math.round doc.time.getTime()/1000
+      cords.push
+        _id: doc._id
+        longlat: doc.longlat
+        location: doc.location
+        time: time
+        solver: doc.solver
+        fox_group: doc.fox_group
+
+
+    res.send cords
+
+
 app.get '/hints.geo.json', auth, (req, res) ->
   db.Hint.find({}).sort('time', 1).exec (err, docs) ->
     groups = {}

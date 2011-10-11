@@ -16,6 +16,10 @@ div '.topbar', ->
 partial 'partials/hintform'
 partial 'partials/hintpoint'
 
+coffeescript -> $ ->
+  hints = new Hints $ '#hints'
+  hints.redraw()
+
 # Pagina
 div '.container.page', ->
   div '.row', ->
@@ -37,12 +41,14 @@ div '.container.page', ->
         btn = (group, i) ->
           button '.btn', 'data-group': group, 'data-time': 1+i, -> 'Invullen'
         tbody style: 'height: 569px', ->
-          for i in [0..29]
-            tr style: 'height: 48px', ->
+          for i in [0..@howlong-1]
+            time = new Date @begin.getTime() + (i * 3600 * 1000)
+            tr style: 'height: 48px', 'data-time': Math.round time.getTime()/1000, ->
               td '.width', -> btn 'Alpha', i
               td '.width', -> btn 'Bravo', i
               td '.width', -> btn 'Charlie', i
               td '.width', -> btn 'Delta', i
               td '.width', -> btn 'Echo', i
               td '.width', -> btn 'Foxtrot', i
-              td '.full-width', -> "#{(9+i) % 24}:00" # HACK
+              td '.full-width', ->
+                time.toLocaleTimeString().substring 0, 5

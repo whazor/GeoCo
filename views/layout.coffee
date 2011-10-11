@@ -8,8 +8,9 @@ html ->
 
     script src:"/js/jquery-1.6.4.min.js"
     script src:"/js/jquery-ui-1.9-pre.min.js"
+    script src:"/js/underscore-min.js"
     script src:"/js/bootstrap-dropdown.js"
     script src:"/js/polymaps.min.js"
     script src:"/app.js"
-    script "window.loggedin = #{@loggedin};"
+    script "window.loggedin = #{@loggedin}; window.year = new Date().getFullYear();"
   body -> @body
