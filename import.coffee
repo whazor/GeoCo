@@ -10,7 +10,7 @@ data = ''
 h = http.get options, (res) ->
   res.on 'data', (chunk) -> data += chunk.toString()
   res.on 'end', ->
-    db.Hint.$where('this.time.getYear() == 110').remove().exec (err, docs) ->
+    db.Hint.$where('this.time.getFullYear() == 2010').remove().exec (err, docs) ->
       db.User.findOne {'name': 'System'}, (err, user) ->
         if err or user == null
           user = new db.User
