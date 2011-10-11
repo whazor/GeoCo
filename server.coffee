@@ -59,6 +59,8 @@ app.get '/hint/:id', auth, (req, res) ->
 
 app.get '/hints.json', auth, (req, res) ->
   db.Hint.find {}, (err, docs) ->
+app.get '/hints.geo.json', auth, (req, res) ->
+  db.Hint.find({}).sort('time', 1).exec (err, docs) ->
     groups = {}
     features = []
     for doc in docs
