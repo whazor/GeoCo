@@ -24,7 +24,7 @@ coffeescript -> $ ->
   $('#hints tbody').bind 'scroll', autoposition
   $(window).bind 'resize', autoposition
 
-div '.hintform', ->
+div '.hintform.hidden', ->
   h3 '.title', -> 'Popup'
   form '.form-stacked.content', style: 'padding:0;margin:0', method: 'post', action: '/hints', ->
     div '.modal-body', ->

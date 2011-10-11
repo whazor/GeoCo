@@ -18,7 +18,7 @@ coffeescript -> $ ->
   #$('#hints tbody').bind 'scroll', autoposition
   $(window).bind 'resize', autoposition
 
-div '.hintpoint', ->
+div '.hintpoint.hidden', ->
   h3 '.title', -> 'Hint'
   div '.modal-body.content.clearfix', ->
     img src: '/img/spinner.gif', style: 'display:block;float:left;'
