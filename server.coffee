@@ -8,7 +8,7 @@ db = require './lib/scheme'
 
 # Configure website
 password = "test123" # TODO: change?
-begin = new Date 2011, 9, 16, 9, 0, 0
+begin = new Date 2010, 9, 16, 9, 0, 0
 console.log begin
 howlong = 30
 
@@ -60,13 +60,13 @@ app.get '/', auth, (req, res) ->
 app.post '/hints', auth, (req, res) -> res.redirect '/'
 
 app.get '/hint/:id', auth, (req, res) ->
-  db.Hint.findById(req.params.id).populate('solver').run  (err, doc) ->
+  db.Hint.findById(req.params.id).populate('solver').run (err, doc) ->
     return if err
     res.local 'doc', doc
     res.render 'hint', {layout: false}
 
 app.get '/hints.json', auth, (req, res) ->
-  db.Hint.find({}).sort('time', 1).exec (err, docs) ->
+  db.Hint.find({}).populate('solver').sort('time', 1).exec (err, docs) ->
     cords = []
     for doc in docs
       time = Math.round doc.time.getTime()/1000
@@ -75,9 +75,8 @@ app.get '/hints.json', auth, (req, res) ->
         longlat: doc.longlat
         location: doc.location
         time: time
-        solver: doc.solver
+        solver: doc.solver.name
         fox_group: doc.fox_group
-
 
     res.send cords
 

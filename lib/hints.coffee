@@ -11,10 +11,21 @@ module.exports = class
       @.redraw()
 
   redraw: ->
-    for tr in $('tbody tr', @table)
+    for tr in $ 'tbody tr', @table
       time = $(tr).data 'time'
       #console.log time
-      for hint in @data
-        console.log hint.time, time
       hints = _.select @data, (hint) -> time == hint.time
-      console.log hints
+      for hint in hints
+        el = $('.'+hint.fox_group, tr)
+        link = $('<a href="#" />').html hint.solver
+        link.data 'longlat',
+          lat: hint.longlat.x
+          lon: hint.longlat.y
+        link.bind 'click', (e) ->
+          map.center $(@).data('longlat')
+
+          map.zoom(15)
+          return false
+        el.html ''
+        el.append link
+

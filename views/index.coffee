@@ -44,11 +44,10 @@ div '.container.page', ->
           for i in [0..@howlong-1]
             time = new Date @begin.getTime() + (i * 3600 * 1000)
             tr style: 'height: 48px', 'data-time': Math.round time.getTime()/1000, ->
-              td '.width', -> btn 'Alpha', i
-              td '.width', -> btn 'Bravo', i
-              td '.width', -> btn 'Charlie', i
-              td '.width', -> btn 'Delta', i
-              td '.width', -> btn 'Echo', i
-              td '.width', -> btn 'Foxtrot', i
-              td '.full-width', ->
-                time.toLocaleTimeString().substring 0, 5
+              td '.alpha.width', -> btn 'Alpha', i
+              td '.bravo.width', -> btn 'Bravo', i
+              td '.charlie.width', -> btn 'Charlie', i
+              td '.delta.width', -> btn 'Delta', i
+              td '.echo.width', -> btn 'Echo', i
+              td '.foxtrot.width', -> btn 'Foxtrot', i
+              td '.full-width', -> time.toLocaleTimeString().substring 0, 5
