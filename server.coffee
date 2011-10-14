@@ -1,3 +1,4 @@
+#!/usr/bin/env coffee
 sys = require 'sys'
 
 express = require 'express'
