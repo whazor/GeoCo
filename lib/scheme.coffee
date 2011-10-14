@@ -2,6 +2,7 @@ mongoose = require 'mongoose'
 db = mongoose.createConnection 'mongodb://localhost/jotihunt'
 cords = require './cords'
 ent = require 'ent'
+geo = require 'geo'
 #FoxGroupSchema = new Schema
 #  name:
 #    type: String, required: true
@@ -36,8 +37,11 @@ HintSchema.pre 'save', (next) ->
   return unless @location
   switch @location.sort.toLowerCase()
     when 'address'
-      @longlat = {x: 1, y: 1}
-      next()
+      geo.geocoder geo.google, @location.value, false, (formatted, lat, long) =>
+        @longlat =
+          x: lat
+          y: long
+        next()
     when 'longlat'
       @longlat = @location.value
       next()
