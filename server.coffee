@@ -69,8 +69,8 @@ app.get '/hint/:id', auth, (req, res) ->
     res.local 'doc', doc
     res.render 'hint', {layout: false}
 
-app.get '/hints.json', auth, (req, res) ->
-  db.Hint.find({}).populate('solver').sort('time', 1).exec (err, docs) ->
+app.get '/hints/:year.json', auth, (req, res) ->
+  db.Hint.find({'this.time.getFullYear()': req.params.year}).populate('solver').sort('time', 1).exec (err, docs) ->
     cords = []
     for doc in docs
       time = Math.round doc.time.getTime()/1000
