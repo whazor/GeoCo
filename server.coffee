@@ -4,6 +4,7 @@ sys = require 'sys'
 express = require 'express'
 app = express.createServer()
 browserify = require 'browserify'
+MongoStore = require 'connect-mongo'
 
 db = require './lib/scheme'
 
@@ -32,7 +33,10 @@ app.configure ->
     #filter: require('uglify-js')
   app.use express.cookieParser()
   app.use express.bodyParser()
-  app.use express.session({ secret: "HIERMOETRANDOMKEYKOMEN" })
+  app.use express.session
+    secret: config.secret
+    store: new MongoStore
+      db: "jotihunt"
 
   app.use express.errorHandler({ dumpExceptions: true, showStack: true })
 
