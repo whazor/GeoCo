@@ -61,7 +61,41 @@ app.get '/', auth, (req, res) ->
   res.render 'index'
 
 
-app.post '/hints', auth, (req, res) -> res.redirect '/'
+app.post '/hints', auth, (req, res) ->
+  hint = new db.Hint
+    solver: req.session.user
+    fox_group: req.body.fox_group
+  time = new Date()
+  time.setTime(parseInt(req.body.time))
+  hint.time = time
+  
+  switch req.body.sort
+    when 'rdh'
+      hint.location =
+        sort: 'rdh'
+        value:
+          x: req.body.cord_x
+          y: req.body.cord_y
+
+    when 'longlat'
+      hint.location =
+        sort: 'longlat'
+        value:
+          x: req.body.cord_x
+          y: req.body.cord_y
+ 
+    when 'address'
+      hint.location =
+        sort: 'address'
+        value: req.body.address
+
+    #when 'none'
+      # TODO: En nu?
+  console.log 'Opslaan...', hint
+  hint.save (err) ->
+    console.log 'Opgeslagen!'
+    console.log err if err
+    res.redirect '/'
 
 app.get '/hint/:id', auth, (req, res) ->
   db.Hint.findById(req.params.id).populate('solver').run (err, doc) ->

@@ -38,16 +38,16 @@ div '.container.page', ->
             th '.full-width', -> 'Tijd:'
 
 
-        btn = (group, i) ->
-          button '.btn', 'data-group': group, 'data-time': 1+i, -> 'Invullen'
+        btn = (group, time) ->
+          button '.btn', 'data-group': group, 'data-time': time.getTime(), -> 'Invullen'
         tbody style: 'height: 569px', ->
           for i in [0..@howlong-1]
             time = new Date @begin.getTime() + (i * 3600 * 1000)
             tr style: 'height: 48px', 'data-time': Math.round time.getTime()/1000, ->
-              td '.alpha.width', -> btn 'Alpha', i
-              td '.bravo.width', -> btn 'Bravo', i
-              td '.charlie.width', -> btn 'Charlie', i
-              td '.delta.width', -> btn 'Delta', i
-              td '.echo.width', -> btn 'Echo', i
-              td '.foxtrot.width', -> btn 'Foxtrot', i
+              td '.alpha.width', -> btn 'Alpha', time
+              td '.bravo.width', -> btn 'Bravo', time
+              td '.charlie.width', -> btn 'Charlie', time
+              td '.delta.width', -> btn 'Delta', time
+              td '.echo.width', -> btn 'Echo', time
+              td '.foxtrot.width', -> btn 'Foxtrot', time
               td '.full-width', -> time.toLocaleTimeString().substring 0, 5

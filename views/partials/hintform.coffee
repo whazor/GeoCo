@@ -5,10 +5,15 @@ coffeescript -> $ ->
     return unless $(this).data('group')
 
     popup.show $(this), (selector) =>
-      time = 9 + (parseInt $(this).data('time') - 1) % 24
+      time = new Date()
+      time.setTime parseInt($(this).data('time'))
       group = $(this).data 'group'
 
-      $('.title', selector).text "#{group} - #{time}:00"
+      formatted = time.toLocaleTimeString().substring 0, 5
+
+      $('.title', selector).text "#{group} - #{formatted}:00"
+      $('[name=fox_group]', selector).val group
+      $('[name=time]', selector).val time.getTime()
 
       # Rest of the javascript
       $('.hinttype', selector).bind 'change', (event) ->
@@ -28,22 +33,23 @@ div '.hintform.hidden', ->
   h3 '.title', -> 'Popup'
   form '.form-stacked.content', style: 'padding:0;margin:0', method: 'post', action: '/hints', ->
     div '.modal-body', ->
-
+      input name: 'fox_group', type: 'hidden'
+      input name: 'time', type: 'hidden'
       label 'Soort:'
-      select '.hinttype', ->
-        option value: 'rdc', -> 'Rijksdriehoekscoördinaten'
-        option value: 'latlng', -> 'Geografische coördinaten'
+      select '.hinttype', name: 'sort', ->
+        option value: 'rdh', -> 'Rijksdriehoekscoördinaten'
+        option value: 'longlat', -> 'Geografische coördinaten'
         option value: 'address', -> 'Adres'
         option value: 'none', -> 'Geen'
       div '.coordinate', ->
         label 'Coördinaat:'
-        input '.mini', maxlength: 6
+        input '.mini', name: 'cord_x', maxlength: 6
 
         span ','
-        input '.mini', maxlength: 6
+        input '.mini', name: 'cord_y', maxlength: 6
       div '.address.hidden', ->
         label 'Adres:'
-        input type: 'text'
+        input name: 'address', type: 'text'
 
 
     div '.modal-footer', ->

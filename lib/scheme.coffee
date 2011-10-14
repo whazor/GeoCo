@@ -27,7 +27,7 @@ HintSchema = new Schema
   fox_group:
     type: String
     required: true
-    set: (string) -> ent.encode string
+    set: (string) -> ent.encode(string).toLowerCase()
   time:
     type: Date, required: true
 
