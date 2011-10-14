@@ -153,4 +153,4 @@ startServer = (host, port) ->
   app.listen port, host
   console.log "Server opgestart op http://#{host}:#{port}"
 
-startServer '0.0.0.0', 8124
+startServer '0.0.0.0', 80
