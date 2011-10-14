@@ -6,7 +6,7 @@
 module.exports = class
   constructor: (@table) ->
     @data = []
-    $.get '/hints/#{year}.json', (data) =>
+    $.get "/hints/#{year}.json", (data) =>
       @data = data
       @.redraw()
 

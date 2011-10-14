@@ -69,24 +69,8 @@ app.get '/hint/:id', auth, (req, res) ->
     res.local 'doc', doc
     res.render 'hint', {layout: false}
 
-app.get '/hints/:year.json', auth, (req, res) ->
-  db.Hint.find({'this.time.getFullYear()': req.params.year}).populate('solver').sort('time', 1).exec (err, docs) ->
-    cords = []
-    for doc in docs
-      time = Math.round doc.time.getTime()/1000
-      cords.push
-        _id: doc._id
-        longlat: doc.longlat
-        location: doc.location
-        time: time
-        solver: doc.solver.name
-        fox_group: doc.fox_group
-
-    res.send cords
-
-
 app.get '/hints/:year.geo.json', auth, (req, res) ->
-  db.Hint.find({'this.time.getFullYear()': req.params.year}).sort('time', 1).exec (err, docs) ->
+  db.Hint.$where('this.time.getFullYear() == '+parseInt(req.params.year)).sort('time', 1).exec (err, docs) ->
     groups = {}
     features = []
     for doc in docs
@@ -111,6 +95,25 @@ app.get '/hints/:year.geo.json', auth, (req, res) ->
     res.send
       type: 'FeatureCollection'
       features: features
+
+app.get '/hints/:year.json', auth, (req, res) ->
+  db.Hint.$where('this.time.getFullYear() == '+parseInt(req.params.year)).populate('solver').sort('time', 1).exec (err, docs) ->
+    console.log docs
+    cords = []
+    for doc in docs
+      time = Math.round doc.time.getTime()/1000
+      cords.push
+        _id: doc._id
+        longlat: doc.longlat
+        location: doc.location
+        time: time
+        solver: doc.solver.name
+        fox_group: doc.fox_group
+
+    res.send cords
+
+
+
 
 app.get '/login', (req, res) -> res.render 'login'
 app.get '/logout', auth, (req, res) ->
@@ -153,4 +156,4 @@ startServer = (host, port) ->
   app.listen port, host
   console.log "Server opgestart op http://#{host}:#{port}"
 
-startServer '0.0.0.0', 80
+startServer '0.0.0.0', 8124
