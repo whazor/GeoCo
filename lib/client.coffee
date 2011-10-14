@@ -25,11 +25,11 @@ $ ->
     .hosts(["a.", "b.", "c.", ""]))
 
 
-  map.add po.geoJson().url('/deelgebieden_2010.json').on "load", (e) ->
+  map.add po.geoJson().url("/deelgebieden_#{year}.json").on "load", (e) ->
     for feature in e.features
       feature.element.setAttribute 'class', "group #{feature.data.id}"
 
-  map.add po.geoJson().url('/hints.geo.json').on 'load', (e) ->
+  map.add po.geoJson().url("/hints/#{year}.geo.json").on 'load', (e) ->
     for feature in e.features
       properties = feature.data.geometry.properties
       if properties.type == 'Hint'
@@ -40,7 +40,6 @@ $ ->
 
       else if properties.type == 'Line'
         feature.element.setAttribute 'class', 'line'
-
 
 
 

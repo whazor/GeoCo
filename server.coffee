@@ -8,8 +8,12 @@ db = require './lib/scheme'
 
 # Configure website
 password = "test123" # TODO: change?
-begin = new Date 2010, 9, 16, 9, 0, 0
-console.log begin
+years =
+  2010: new Date 2010, 9, 16, 9, 0, 0
+  2011: new Date 2011, 9, 15, 9, 0, 0
+
+current_year = new Date().getFullYear()
+
 howlong = 30
 
 app.configure ->
@@ -46,15 +50,15 @@ auth = (req, res, next) ->
 app.all '/*', (req, res, next) ->
   res.local 'loggedin', false
   res.local 'username', 'Gast'
+  res.local 'current_year', current_year
   next()
 
 # Route to index
+#
 app.get '/', auth, (req, res) ->
-  db.Hint.find {}, (err, docs) ->
-    res.local 'begin', begin
-    res.local 'howlong', howlong
-    res.local 'hints', docs
-    res.render 'index'
+  res.local 'begin', years[current_year]
+  res.local 'howlong', howlong
+  res.render 'index'
 
 
 app.post '/hints', auth, (req, res) -> res.redirect '/'
@@ -81,8 +85,8 @@ app.get '/hints.json', auth, (req, res) ->
     res.send cords
 
 
-app.get '/hints.geo.json', auth, (req, res) ->
-  db.Hint.find({}).sort('time', 1).exec (err, docs) ->
+app.get '/hints/:year.geo.json', auth, (req, res) ->
+  db.Hint.find({'this.time.getFullYear()': req.params.year}).sort('time', 1).exec (err, docs) ->
     groups = {}
     features = []
     for doc in docs
