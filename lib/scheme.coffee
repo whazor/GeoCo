@@ -43,7 +43,9 @@ HintSchema.pre 'save', (next) ->
           y: long
         next()
     when 'longlat'
-      @longlat = @location.value
+      @longlat =
+        x: @location.value.x
+        y: @location.value.y
       next()
     when 'rdh'
       t = new cords.Triangular @location.value.x, @location.value.y

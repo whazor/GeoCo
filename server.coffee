@@ -74,15 +74,15 @@ app.post '/hints', auth, (req, res) ->
       hint.location =
         sort: 'rdh'
         value:
-          x: req.body.cord_x
-          y: req.body.cord_y
+          x: parseInt req.body.rdh_x
+          y: parseInt req.body.rdh_y
 
     when 'longlat'
       hint.location =
         sort: 'longlat'
         value:
-          x: req.body.cord_x
-          y: req.body.cord_y
+          x: parseFloat req.body.longlat_x
+          y: parseFloat req.body.longlat_y
  
     when 'address'
       hint.location =

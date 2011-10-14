@@ -18,9 +18,34 @@ coffeescript -> $ ->
       # Rest of the javascript
       $('.hinttype', selector).bind 'change', (event) ->
         none = $(this).val() == 'none'
-        $('.coordinate').toggleClass 'hidden', $(this).val() == 'address' or none
+        $('.rdh').toggleClass 'hidden', $(this).val() != 'rdh' or none
+        $('.longlat').toggleClass 'hidden', $(this).val() != 'longlat' or none
         $('.address').toggleClass 'hidden', $(this).val() != 'address' or none
         popup.position()
+
+      changeCord = false
+      $('.cord', selector).bind 'keyup', (event) ->
+        sort = $('[name=sort]', selector).val()
+        [x, y] = [0, 0]
+
+        switch sort
+          #when 'address'
+          when 'longlat'
+            x = parseFloat $('[name=longlat_x]', selector).val()
+            y = parseFloat $('[name=longlat_y]', selector).val()
+          when 'rdh'
+            cordx = $('[name=rdh_x]', selector).val()
+            cordy = $('[name=rdh_y]', selector).val()
+            t = new Cords.Triangular cordx, cordy
+            g = t.toGeographic()
+            [x, y] = [g.x, g.y]
+        console.log [x, y]
+        point.features([{geometry: {coordinates: [y, x], type: "Point"}}])
+        #point.
+        #autoposition = (event) ->
+          #clearTimeout timeout
+          #timeout = setTimeout (-> popup.position()), 50
+
 
   timeout = false
   autoposition = (event) ->
@@ -41,12 +66,18 @@ div '.hintform.hidden', ->
         option value: 'longlat', -> 'Geografische coördinaten'
         option value: 'address', -> 'Adres'
         option value: 'none', -> 'Geen'
-      div '.coordinate', ->
+      div '.rdh', ->
         label 'Coördinaat:'
-        input '.mini', name: 'cord_x', maxlength: 6
+        input '.mini.cord', name: 'rdh_x', maxlength: 6
 
         span ','
-        input '.mini', name: 'cord_y', maxlength: 6
+        input '.mini.cord', name: 'rdh_y', maxlength: 6
+      div '.longlat.hidden', ->
+        label 'Coördinaat:'
+        input '.small.cord', name: 'longlat_x', maxlength: 12
+
+        span ','
+        input '.small.cord', name: 'longlat_y', maxlength: 12
       div '.address.hidden', ->
         label 'Adres:'
         input name: 'address', type: 'text'

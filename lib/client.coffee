@@ -1,6 +1,8 @@
 # Hier kunnen requires komen!! :D
 window.Popup = require('./popup')
 window.Hints = require('./hints')
+window.Cords = require('./cords')
+
 $ ->
   console.log year
   # legacy code:
@@ -41,7 +43,13 @@ $ ->
       else if properties.type == 'Line'
         feature.element.setAttribute 'class', 'line'
 
-
+  window.point = po.geoJson()
+    .on "load", (e) ->
+      for feature in e.features
+        #properties = feature.data.geometry.properties
+        feature.element.setAttribute 'class', 'point'
+        feature.element.setAttribute 'r', 5#Math.pow(2, tile.zoom - 11) * Math.sqrt(mean.size)
+  map.add point
 
   btnMapFullWindow = $ """
   <svg style="position: absolute; right: -16px; top: -16px; width: 32px; height: 32px; ">
