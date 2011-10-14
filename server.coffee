@@ -1,3 +1,4 @@
+#!/usr/bin/env coffee
 sys = require 'sys'
 
 express = require 'express'
@@ -7,7 +8,7 @@ browserify = require 'browserify'
 db = require './lib/scheme'
 
 # Configure website
-password = "test123" # TODO: change?
+{password} = config = require('./config')
 years =
   2010: new Date 2010, 9, 16, 9, 0, 0
   2011: new Date 2011, 9, 15, 9, 0, 0
