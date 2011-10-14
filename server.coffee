@@ -91,9 +91,7 @@ app.post '/hints', auth, (req, res) ->
 
     #when 'none'
       # TODO: En nu?
-  console.log 'Opslaan...', hint
   hint.save (err) ->
-    console.log 'Opgeslagen!'
     console.log err if err
     res.redirect '/'
 
@@ -132,7 +130,6 @@ app.get '/hints/:year.geo.json', auth, (req, res) ->
 
 app.get '/hints/:year.json', auth, (req, res) ->
   db.Hint.$where('this.time.getFullYear() == '+parseInt(req.params.year)).populate('solver').sort('time', 1).exec (err, docs) ->
-    console.log docs
     cords = []
     for doc in docs
       time = Math.round doc.time.getTime()/1000
