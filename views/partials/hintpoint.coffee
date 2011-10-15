@@ -1,8 +1,20 @@
 coffeescript -> $ ->
   popup = new Popup $('.hintpoint'), 'vertical', '5px 1px'
+  window.scoutingGroupClick = (e) ->
+    info = $(this).data 'html'
+    
+    popup.show $(this), (selector) =>
+      $('.title', selector).html('Scoutinggroep')
+      console.log info
+      selector.css zIndex: 40000
+      $('.content', selector).html info
+      popup.position()
+    return false
+
   window.hintClick = (e) ->
     id = $(this).data 'id'
     popup.show $(this), (selector) =>
+      $('.title', selector).html('Hint')
       selector.css zIndex: 40000
       console.log "/hint/#{id}"
       $.get "/hint/#{id}", (r) ->

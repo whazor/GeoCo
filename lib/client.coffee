@@ -31,6 +31,14 @@ $ ->
     for feature in e.features
       feature.element.setAttribute 'class', "group #{feature.data.id}"
 
+  map.add po.geoJson().url("/scoutinggroepen.json").on 'load', (e) ->
+    for feature in e.features
+      properties = feature.data.geometry.properties
+      feature.element.setAttribute 'class', 'scoutinggroup'
+      feature.element.setAttribute 'r', 4#Math.pow(2, tile.zoom - 11) * Math.sqrt(mean.size)
+      $(feature.element).data 'html', properties.html
+      $(feature.element).bind 'click', scoutingGroupClick
+
   map.add po.geoJson().url("/hints/#{year}.geo.json").on 'load', (e) ->
     for feature in e.features
       properties = feature.data.geometry.properties
