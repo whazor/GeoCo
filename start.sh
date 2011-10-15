@@ -1,5 +1,5 @@
 while true
 do
-  coffee server.coffee
+  supervisor server.coffee
   sleep 1
 done

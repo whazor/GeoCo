@@ -4,18 +4,19 @@ sys = require 'sys'
 express = require 'express'
 app = express.createServer()
 browserify = require 'browserify'
+MongoStore = require 'connect-mongo'
 
 db = require './lib/scheme'
 
 # Configure website
-{password} = config = require('./config')
+config = require './config'
 years =
   2010: new Date 2010, 9, 16, 9, 0, 0
-  2011: new Date 2011, 9, 15, 9, 0, 0
+  2011: new Date 2011, 9, 16, 0, 0, 0
 
 current_year = new Date().getFullYear()
 
-howlong = 30
+howlong = 15
 
 app.configure ->
   app.register '.coffee', require('coffeekup').adapters.express
@@ -32,7 +33,10 @@ app.configure ->
     #filter: require('uglify-js')
   app.use express.cookieParser()
   app.use express.bodyParser()
-  app.use express.session({ secret: "HIERMOETRANDOMKEYKOMEN" })
+  app.use express.session
+    secret: config.secret
+    store: new MongoStore
+      db: "jotihunt"
 
   app.use express.errorHandler({ dumpExceptions: true, showStack: true })
 
@@ -69,38 +73,40 @@ app.get '/', auth, (req, res) ->
 
 
 app.post '/hints', auth, (req, res) ->
-  hint = new db.Hint
-    solver: req.session.user
-    fox_group: req.body.fox_group
   time = new Date()
   time.setTime(parseInt(req.body.time))
-  hint.time = time
-  
-  switch req.body.sort
-    when 'rdh'
-      hint.location =
-        sort: 'rdh'
-        value:
-          x: parseInt req.body.rdh_x
-          y: parseInt req.body.rdh_y
+  db.Hint.findOne { time: time, fox_group: req.body.fox_group }, (err, hint) ->
+    if err or not doc?
+      hint = new db.Hint
+        solver: req.session.user
+        fox_group: req.body.fox_group
+    hint.time = time
+    
+    switch req.body.sort
+      when 'rdh'
+        hint.location =
+          sourceType: 'rdh'
+          rdh:
+            x: parseInt req.body.rdh_x
+            y: parseInt req.body.rdh_y
 
-    when 'longlat'
-      hint.location =
-        sort: 'longlat'
-        value:
-          x: parseFloat req.body.longlat_x
-          y: parseFloat req.body.longlat_y
- 
-    when 'address'
-      hint.location =
-        sort: 'address'
-        value: req.body.address
+      when 'longlat'
+        hint.location =
+          sourceType: 'longlat'
+          longlat:   
+            x: parseFloat req.body.longlat_x
+            y: parseFloat req.body.longlat_y
+   
+      when 'address'
+        hint.location =
+          sourceType: 'address'
+          address: req.body.address
 
-    #when 'none'
-      # TODO: En nu?
-  hint.save (err) ->
-    console.log err if err
-    res.redirect '/'
+      #when 'none'
+        # TODO: En nu?
+    hint.save (err) ->
+      console.log err if err
+      res.redirect '/'
 
 app.get '/hint/:id/delete', auth, (req, res) ->
   db.Hint.remove {'_id':req.params.id}, (err) ->
@@ -163,7 +169,7 @@ app.get '/logout', auth, (req, res) ->
   res.redirect '/'
 
 app.post '/authenticate', (req, res) ->
-  if req.body.password != password
+  if req.body.password != config.password
     res.redirect '/login#fail'
     return
 
@@ -198,4 +204,4 @@ startServer = (host, port) ->
   app.listen port, host
   console.log "Server opgestart op http://#{host}:#{port}"
 
-startServer '0.0.0.0', 8124
+startServer '0.0.0.0', config.port
