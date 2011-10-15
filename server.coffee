@@ -67,38 +67,40 @@ app.get '/', auth, (req, res) ->
 
 
 app.post '/hints', auth, (req, res) ->
-  hint = new db.Hint
-    solver: req.session.user
-    fox_group: req.body.fox_group
   time = new Date()
   time.setTime(parseInt(req.body.time))
-  hint.time = time
-  
-  switch req.body.sort
-    when 'rdh'
-      hint.location =
-        sort: 'rdh'
-        value:
-          x: parseInt req.body.rdh_x
-          y: parseInt req.body.rdh_y
+  db.Hint.findOne { time: time, fox_group: req.body.fox_group }, (err, hint) ->
+    if err or not doc?
+      hint = new db.Hint
+        solver: req.session.user
+        fox_group: req.body.fox_group
+    hint.time = time
+    
+    switch req.body.sort
+      when 'rdh'
+        hint.location =
+          sourceType: 'rdh'
+          rdh:
+            x: parseInt req.body.rdh_x
+            y: parseInt req.body.rdh_y
 
-    when 'longlat'
-      hint.location =
-        sort: 'longlat'
-        value:
-          x: parseFloat req.body.longlat_x
-          y: parseFloat req.body.longlat_y
- 
-    when 'address'
-      hint.location =
-        sort: 'address'
-        value: req.body.address
+      when 'longlat'
+        hint.location =
+          sourceType: 'longlat'
+          longlat:   
+            x: parseFloat req.body.longlat_x
+            y: parseFloat req.body.longlat_y
+   
+      when 'address'
+        hint.location =
+          sourceType: 'address'
+          address: req.body.address
 
-    #when 'none'
-      # TODO: En nu?
-  hint.save (err) ->
-    console.log err if err
-    res.redirect '/'
+      #when 'none'
+        # TODO: En nu?
+    hint.save (err) ->
+      console.log err if err
+      res.redirect '/'
 
 app.get '/hint/:id/delete', auth, (req, res) ->
   db.Hint.remove {'_id':req.params.id}, (err) ->
