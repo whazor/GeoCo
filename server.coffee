@@ -100,6 +100,10 @@ app.post '/hints', auth, (req, res) ->
     console.log err if err
     res.redirect '/'
 
+app.get '/hint/:id/delete', auth, (req, res) ->
+  db.Hint.findById(req.params.id).remove()
+  res.redirect '/'
+
 app.get '/hint/:id', auth, (req, res) ->
   db.Hint.findById(req.params.id).populate('solver').run (err, doc) ->
     return if err
