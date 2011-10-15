@@ -76,7 +76,7 @@ app.post '/hints', auth, (req, res) ->
   time = new Date()
   time.setTime(parseInt(req.body.time))
   db.Hint.findOne { time: time, fox_group: req.body.fox_group }, (err, hint) ->
-    if err or not doc?
+    if err or not hint?
       hint = new db.Hint
         solver: req.session.user
         fox_group: req.body.fox_group
