@@ -1,5 +1,5 @@
 mongoose = require 'mongoose'
-db = mongoose.createConnection 'mongodb://localhost/jotihunt'
+db = mongoose.createConnection "mongodb://localhost/#{require('../config').database}"
 cords = require './cords'
 ent = require 'ent'
 geo = require 'geo'

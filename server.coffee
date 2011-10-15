@@ -9,7 +9,7 @@ MongoStore = require 'connect-mongo'
 db = require './lib/scheme'
 
 # Configure website
-{password} = config = require('./config')
+config = require './config'
 years =
   2010: new Date 2010, 9, 16, 9, 0, 0
   2011: new Date 2011, 9, 15, 9, 0, 0
@@ -161,7 +161,7 @@ app.get '/logout', auth, (req, res) ->
   res.redirect '/'
 
 app.post '/authenticate', (req, res) ->
-  if req.body.password != password
+  if req.body.password != config.password
     res.redirect '/login#fail'
     return
 
@@ -196,4 +196,4 @@ startServer = (host, port) ->
   app.listen port, host
   console.log "Server opgestart op http://#{host}:#{port}"
 
-startServer '0.0.0.0', 8124
+startServer '0.0.0.0', config.port
