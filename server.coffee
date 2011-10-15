@@ -12,11 +12,11 @@ db = require './lib/scheme'
 config = require './config'
 years =
   2010: new Date 2010, 9, 16, 9, 0, 0
-  2011: new Date 2011, 9, 15, 9, 0, 0
+  2011: new Date 2011, 9, 16, 0, 0, 0
 
 current_year = new Date().getFullYear()
 
-howlong = 30
+howlong = 15
 
 app.configure ->
   app.register '.coffee', require('coffeekup').adapters.express
