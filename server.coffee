@@ -56,6 +56,12 @@ app.all '/*', (req, res, next) ->
 
 # Route to index
 #
+app.get '/mobile', auth, (req, res) ->
+  db.Hint.$where('this.time.getFullYear() == '+current_year).populate('solver').desc('time').exec (err, docs) ->
+    res.local 'docs', docs
+    res.render 'mobile'
+
+
 app.get '/', auth, (req, res) ->
   res.local 'begin', years[current_year]
   res.local 'howlong', howlong
