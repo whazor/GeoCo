@@ -97,8 +97,8 @@ app.post '/hints', auth, (req, res) ->
     res.redirect '/'
 
 app.get '/hint/:id/delete', auth, (req, res) ->
-  db.Hint.findById(req.params.id).remove()
-  res.redirect '/'
+  db.Hint.remove {'_id':req.params.id}, (err) ->
+    res.redirect '/'
 
 app.get '/hint/:id', auth, (req, res) ->
   db.Hint.findById(req.params.id).populate('solver').run (err, doc) ->
