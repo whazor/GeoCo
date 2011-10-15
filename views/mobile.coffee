@@ -12,4 +12,4 @@ div style: 'margin: 20px;', ->
         td -> hint.fox_group
         td -> hint.solver.name
         td -> 
-          a href: "http://maps.google.nl/maps?q=#{hint.location.longlat.x},+#{hint.location.longlat.y}", -> hint.location.value
+          a href: "http://maps.google.nl/maps?q=#{hint.location.longlat.x},+#{hint.location.longlat.y}", -> hint.location.raw

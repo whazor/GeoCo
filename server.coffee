@@ -124,12 +124,12 @@ app.get '/hints/:year.geo.json', auth, (req, res) ->
     features = []
     for doc in docs
       groups[doc.fox_group] ||= []
-      groups[doc.fox_group].push [doc.longlat.y, doc.longlat.x]
+      groups[doc.fox_group].push [doc.location.longlat.y, doc.location.longlat.x]
       features.push
         type: 'Feature'
         geometry:
           type: 'Point'
-          coordinates: [doc.longlat.y, doc.longlat.x]
+          coordinates: [doc.location.longlat.y, doc.location.longlat.x]
           properties:
             id: doc._id
             type: 'Hint'
