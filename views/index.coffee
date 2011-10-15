@@ -7,6 +7,7 @@ div '.topbar', ->
         li -> a href: '/mobile',-> 'Mobile'
         #li -> a href: '/?#2010',-> '2010'
       ul '.pull-right.nav.secondary-nav', ->
+        #li -> a '.add-hint', style: 'margin-right: 200px', href: '/',-> 'Hint toevoegen'
         li '.dropdown', ->
           a '.dropdown-toggle', -> @username
           ul '.dropdown-menu', ->
@@ -15,6 +16,7 @@ div '.topbar', ->
 # Popup
 partial 'partials/hintform'
 partial 'partials/hintpoint'
+#partial 'partials/allhintform'
 
 coffeescript -> $ ->
   hints = new Hints $ '#hints'

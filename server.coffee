@@ -49,6 +49,8 @@ auth = (req, res, next) ->
       res.redirect '/login'
 
 app.all '/*', (req, res, next) ->
+  res.local 'begin', years[current_year]
+  res.local 'howlong', howlong
   res.local 'loggedin', false
   res.local 'username', 'Gast'
   res.local 'current_year', current_year
@@ -63,8 +65,6 @@ app.get '/mobile', auth, (req, res) ->
 
 
 app.get '/', auth, (req, res) ->
-  res.local 'begin', years[current_year]
-  res.local 'howlong', howlong
   res.render 'index'
 
 
