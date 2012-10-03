@@ -27,6 +27,7 @@ Installeren
 
 - http://www.postgresql.org/download/windows/
 - http://postgis.refractions.net/download/windows/
+- http://mycel.nl/gelderland.gz (420mb)
 
 Usefull links
 -------------
