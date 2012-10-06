@@ -8,6 +8,7 @@ import anorm._
 import play.api.cache._
 import play.api.libs.json.Json
 import play.api.libs.json.Json._
+import play.api.libs.json._
 
 object Routing extends Controller {
   def route(lat: String, long: String) = Action { //Cached(req => "geo")
@@ -19,189 +20,156 @@ object Routing extends Controller {
       def this(input: Seq[Double]) = this(input(0), input(1))
       //      def long = parseDouble(inputLong)
       //      def lat = parseDouble(inputLat)
+      def array = Seq(long, lat)
       override def toString = "POINT(" + long + " " + lat + ")"
     }
-    //abstract class NodePoint
-    class Node(id: Long, p: Point) {}
-    class Road(id: Long, points: List[Point], nodes: List[Long]) {}
-    class RoadPoint(in_road_id: Long, in_point: Point) {
-      def road_id = in_road_id
-      def point = in_point
-      
+    abstract class Node {
+    	def point: Point
+//    	override def toString = "POINT(" + long + " " + lat + ")"
     }
+    
+    case class Road(id: Long, points: List[Point], nodes: List[Long])
+
+    case class Intersection(id: Long, point: Point) extends Node
+    case class RoadPoint(road_id: Long, point: Point) extends Node
 
     def center = new Point(lat, long)
 
     DB.withConnection("osm") { implicit c =>
-
-      /**
-       * Verkrijg de afstand tussen 2 punten
-       */
-      def cost(point1: Point, point2: Point): Double =
-        SQL("""
-    	    select
-    			ST_Length(ST_Line_Substring(linestring, 
-    				ST_Line_Locate_Point(linestring, {point1}),
-    				ST_Line_Locate_Point(linestring, {point2}))) as length
-    	    from ways
-    	    where foot and ST_Contains(linestring, {point1}) and ST_Contains(linestring, {point2}) 
-    	    order by ST_Length(linestring) desc limit 1
-          """).on("point1" -> point1.toString, "point2" -> point2.toString)().head[Double]("length")
-
-      def costNodes(point1: Node, point2: Node): Double =
-        SQL("""
-    	    select
-    			ST_Length(ST_Line_Substring(linestring, 
-    				ST_Line_Locate_Point(linestring, (select geom from nodes where id = {node1} limit 1),
-    				ST_Line_Locate_Point(linestring, (select geom from nodes where id = {node2} limit 1)))) as length
-    	    from ways
-    	    where foot and ARRAY[{node1}, {node2}] @> nodes
-    	    order by length asc limit 1
-          """).on("node1" -> point1, "node2" -> point2)().head[Double]("length")
-      /**
-       * Verkrijg alle wegen in de cirkel
-       */
-      val roads = SQL("""
-    	    select id, array_to_string(nodes, ',') as nodes,
-    		  ST_AsGeoJSON(
-    			ST_Intersection(linestring, ST_Buffer(ST_GeographyFromText({point}),{radius}))
-    	    , 7) as geometry,
-    			ST_Distance(linestring, ST_GeographyFromText({point})) as distance
-    	    from ways
-    	    where foot and ST_Intersects(ST_Buffer(ST_GeographyFromText({point}),{radius}), linestring)
-    	    order by distance asc limit 1000;
-          """).on("point" -> center.toString, "radius" -> radius)().toList.map({ t =>
-        val json = Json.parse(t[String]("geometry"))
-        val points = (json \ "coordinates").as[List[Seq[Double]]].map({ c => new Point(c) })
-        val nodes = t[String]("nodes").split(',').map(_.toLong).toList
-        val id = t[Long]("id")
-        id -> new Road(id, points, nodes)
-      }).toMap
-
       /**
        * Zoek een punt op de weg wat het meest dichtbij het center is.
+       * dit kan niet sneller zonder indexes of tijdelijke tabellen
+       * Snelheid: ~2400ms
        */
-      val centerRoadPoint = {
-        def t = SQL("""
-          select id,
-          ST_AsGeoJSON(ST_Line_Interpolate_Point(linestring, ST_Line_Locate_Point(linestring, ST_GeographyFromText({point})::Geometry))) as geometry
-          from ways
-          where foot
-          order by ST_Distance(linestring, ST_GeographyFromText({point})) asc limit 1 
-          """).on("point" -> center.toString)().head
-        val json = Json.parse(t[String]("geometry"))
-        val point = new Point((json \ "coordinates").as[Seq[Double]])
-        new RoadPoint(t[Long]{"id"}, point)
+      def t = SQL("""
+	      select id,
+	      ST_AsGeoJSON(ST_Line_Interpolate_Point(linestring, ST_Line_Locate_Point(linestring, ST_GeographyFromText({point})::Geometry))) as geometry
+	      from ways
+	      where foot and ST_DWithin(linestring, ST_GeographyFromText({point}), {distance})
+	      order by ST_Distance(linestring, ST_GeographyFromText({point})) asc limit 1 
+	      """).on("point" -> center.toString, "distance" -> 100)().head
+      val json = Json.parse(t[String]("geometry"))
+      val point = new Point((json \ "coordinates").as[Seq[Double]])
+      val centerRoadPoint = RoadPoint(t[Long] { "id" }, point)
+      
+
+      /**
+       * Verkrijg alle nodes in de buurt
+       * Snelheid: ~15ms
+       */
+      def findNodes(point: Node, max_distance: BigDecimal): List[(Intersection, BigDecimal)] = {
+        point match {
+          case Intersection(id, point) => {
+            SQL("""
+					with crossing_ways as (
+						select way_id
+						from way_nodes
+						where node_id = {id} group by way_id),
+					located_node as (select nodes.geom as geom
+						from nodes
+						where id = {id} limit 1) 
+					select DISTINCT ON (ways.id)
+					nodes.id as id,
+					ST_AsGeoJSON(nodes.geom) as geometry,
+					ST_Length(ST_Line_Substring(ways.linestring,
+						(
+							with tmp_linestring as (
+								SELECT (ST_Line_Locate_Point(ways.linestring, (select geom from located_node limit 1))) as p
+								UNION
+								SELECT ST_Line_Locate_Point(ways.linestring, nodes.geom) as p
+							) select p from tmp_linestring order by p asc limit 1
+						),
+						(
+							with tmp_linestring as (
+								SELECT (ST_Line_Locate_Point(ways.linestring, (select geom from located_node limit 1))) as p
+								UNION
+								SELECT ST_Line_Locate_Point(ways.linestring, nodes.geom) as p
+							) select p from tmp_linestring order by p desc limit 1
+						)
+					))::numeric as distance
+					from crossing_ways
+					join way_nodes on crossing_ways.way_id = way_nodes.way_id 
+					join nodes on way_nodes.node_id = nodes.id 
+					join ways on ways.id = crossing_ways.way_id
+					where nodes.id != {id} and ways.foot and (select count(*) from way_nodes where way_nodes.node_id = nodes.id group by way_nodes.node_id) > 1
+					order by ways.id, distance asc
+        		    """).on("id" -> id)().toList.map({ t =>
+              val json = Json.parse(t[String]("geometry"))
+              val point = new Point((json \ "coordinates").as[Seq[Double]])
+              val id = t[Long]("id")
+              val distance = BigDecimal(t[java.math.BigDecimal]("distance"))
+              (new Intersection(id, point), distance)
+            }).toList
+            //        	 ("(select geom from nodes where id = {node1} limit 1)", id) 
+            //        	 ("ST_GeographyFromText({node1})", point.toString) 
+          }
+          case RoadPoint(id, point) => {
+            SQL("""
+				select nodes.id as id,         		    
+				ST_AsGeoJSON(nodes.geom) as geometry,         		   
+				 (
+					ST_Length(
+						ST_Line_Substring(
+							ways.linestring,
+				                        (
+				                            with tmp_linestring as (
+				                                SELECT (ST_Line_Locate_Point(ways.linestring, ST_GeographyFromText({point})::Geometry)) as p
+				                                UNION
+				                                SELECT ST_Line_Locate_Point(ways.linestring, nodes.geom) as p
+				                            ) select p from tmp_linestring order by p asc limit 1
+				                        ),
+				                        (
+				                            with tmp_linestring as (
+				                                SELECT (ST_Line_Locate_Point(ways.linestring, ST_GeographyFromText({point})::Geometry)) as p
+				                                UNION
+				                                SELECT ST_Line_Locate_Point(ways.linestring, nodes.geom) as p
+				                            ) select p from tmp_linestring order by p desc limit 1
+				                        )
+				                )
+				          )
+				     )::numeric as distance
+				from way_nodes         		   
+				join nodes on way_nodes.node_id = nodes.id    
+				join ways on ways.id = way_nodes.way_id    	
+				where ways.foot and way_id = {id} and (select count(*) from way_nodes where way_nodes.node_id = nodes.id group by way_nodes.node_id) > 1
+				order by distance limit 2
+        		    """).on(
+              "id" -> id,
+              "point" -> point.toString,
+              "max" -> max_distance)().toList.map({ t =>
+                val json = Json.parse(t[String]("geometry"))
+                val point = new Point((json \ "coordinates").as[Seq[Double]])
+                val id = t[Long]("id")
+                val distance = BigDecimal(t[java.math.BigDecimal]("distance"))
+                (new Intersection(id, point), distance)
+              }).toList
+          }
+        }
       }
 
-      /**
-       * Verkrijg alle nodes in de cirkel
-       */
-      val intersection = SQL("""
-			select
-    		  nodes.id as id,
-    		  ST_AsGeoJSON(nodes.geom) as geometry
-			from ways
-			join way_nodes on ways.id = way_nodes.way_id
-			join nodes on way_nodes.node_id = nodes.id
-			where foot and ST_Intersects(ST_Buffer(ST_GeographyFromText({point}),{radius}), linestring) and
-			ST_Intersects(ST_Buffer(ST_GeographyFromText({point}),{radius}), nodes.geom) and
-			(select count(way_id) from way_nodes where node_id = nodes.id) > 1
-          """).on("point" -> center.toString, "radius" -> radius)().toList.map({ t =>
-        val json = Json.parse(t[String]("geometry"))
-        val point = new Point((json \ "coordinates").as[Seq[Double]])
-        val id = t[Long]("id")
-        id -> new Node(id, point)
-      }).toMap
-
-      /**
-       * Verkrijg alle punten op de rand van de cirkel.
-       * Hiervan nodes maken
-       */
-      val endNodes = SQL("""
-  with nearby_ways as (
-	  select *
-	  from ways
-	  where foot and ST_Intersects(ST_Buffer(ST_GeographyFromText({point}),{radius}), linestring))
-  select
-	  ST_AsGeoJSON(geom) as geometry,
-	  (select id FROM nearby_ways order by ST_Distance(linestring, geom) asc limit 1) as way_id
-  from (
-	  select (ST_DumpPoints(g.geom)).*
-	  from
-	  (select ST_ConvexHull(ST_Collect(ST_Intersection(linestring::geometry, ST_Buffer(ST_GeographyFromText({point}),{radius})::geometry))) as geom
-  from nearby_ways) as g) as j;
-          """).on("point" -> center.toString, "radius" -> radius)().toList.map({ t =>
-        val json = Json.parse(t[String]("geometry"))
-        val point = new Point((json \ "coordinates").as[Seq[Double]])
-        val id = t[Long]("way_id")
-        id -> new RoadPoint(id, point)
-      }).toMap
-      
-      def beginRoad = roads(centerRoadPoint.road_id)
-      
-      Ok("Werkt!")
+      def findRoute(path: List[Node], max: BigDecimal): List[Node] = {
+        // Haal alle vorige nodes weg
+        def neighbours = findNodes(path.head, max).filterNot(p => path.map(e => e match {
+          case Intersection(id, point) => id
+          case _ => 0
+        }).contains(p._1.id)).filterNot(p => p._2 > max)
+        // Selecteer eerste pad
+        if (neighbours.length == 0) path
+        else{
+          neighbours.head._1 match {
+            case Intersection(id, point) => System.out.println(id + " " + max) 
+          }
+        	
+          findRoute(path.::(neighbours.head._1), max - neighbours.head._2)
+        }
+      }
+      def nodes = findRoute(List(centerRoadPoint), 1000).map(f => Json.toJson(f.point.array)).toSeq
+      Ok(Json.toJson(
+          Map(
+    		  "type" -> toJson("Multipoint"),
+    		  "geometries" -> JsArray(nodes)
+          )
+        ))
     }
   }
 }
-    	
-    	
-////    	Ok(toJson(SQL(
-////    	    """
-////    	    select ST_AsGeoJSON(
-////    			ST_Intersection(linestring, ST_Buffer(ST_GeographyFromText({point}),{radius}))
-////    	    , 7) as geometry,
-////    			ST_Distance(linestring, ST_GeographyFromText({point})) as distance
-////    	    from ways
-////    	    where foot and ST_Intersects(ST_Buffer(ST_GeographyFromText({point}),{radius}), linestring)
-////    	    order by distance asc limit 1000;
-////    	"""
-////    	    ).on("point" -> point, "radius" -> radius)().map({t => Json.parse(t[String]("geometry"))}) toList))
-//    	
-////    	Ok(toJson(SQL("""
-////select ST_AsGeoJSON(nodes.geom) as geometry
-////from ways
-////join way_nodes on ways.id = way_nodes.way_id
-////join nodes on way_nodes.node_id = nodes.id
-////where foot and ST_Intersects(ST_Buffer(ST_GeographyFromText({point}),{radius}), linestring) and
-////ST_Intersects(ST_Buffer(ST_GeographyFromText({point}),{radius}), nodes.geom) and
-////(select count(way_id) from way_nodes where node_id = nodes.id) > 1
-////    	""").on("point" -> point, "radius" -> radius)().map({t => Json.parse(t[String]("geometry"))}) toList))
-//    	    
-////    	WITH nearby_ways AS (SELECT * FROM ways WHERE foot and ST_Intersects(ST_Buffer(ST_GeographyFromText('POINT(5.974545478820801 51.979937410940316)'),900.0), linestring))
-////SELECT geom,
-////(SELECT id FROM nearby_ways order by ST_Distance(linestring, geom) asc limit 1) as way_id
-////FROM (
-////  SELECT (ST_DumpPoints(g.geom)).*
-////  FROM
-////  (select
-////ST_ConvexHull(ST_Collect(ST_Intersection(linestring::geometry, ST_Buffer(ST_GeographyFromText('POINT(5.974545478820801 51.979937410940316)'),900.0)::geometry))) as geom
-////from nearby_ways) as g) as j;
-//    	
-////    	Ok(toJson(SQL("""
-////select 
-////ST_AsText(
-////    	    ST_DumpPoints(ST_ConvexHull(
-////    	    ST_Collect(
-////    	    ST_Intersection(
-////    	    linestring::geometry,
-////    	    ST_Buffer(ST_GeographyFromText({point}),{radius})::geometry))))) as geometry
-////from ways
-////where foot and
-////ST_Intersects(ST_Buffer(ST_GeographyFromText({point}),{radius}), linestring)
-////    	""").on("point" -> point(long, lat), "radius" -> radius)().map({t => Json.parse(t[String]("geometry"))}) toList))//group by id
-//    	
-////    	Ok(toJson(SQL("""
-////    	    WITH nearby_ways AS (SELECT * FROM ways WHERE foot and ST_Intersects(ST_Buffer(ST_GeographyFromText({point}),{radius}), linestring))
-////SELECT geom,
-////(SELECT id FROM nearby_ways order by ST_Distance(linestring, geom) asc limit 1) as way_id
-////FROM (
-////  SELECT (ST_DumpPoints(g.geom)).*
-////  FROM
-////  (select
-////ST_ConvexHull(ST_Collect(ST_Intersection(linestring::geometry, ST_Buffer(ST_GeographyFromText({point}),{radius})::geometry))) as geom
-////from nearby_ways) as g) as j;
-////    	    """).on("point" -> point(long, lat), "radius" -> radius)().map({t => Json.parse(t[String]("geometry"))}) toList))
-//    }
-//  }
-//}
