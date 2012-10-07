@@ -1,0 +1,37 @@
+@(form: Form[(String, String)])(implicit flash: Flash)
+@import helper.twitterBootstrap._
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<title>GeoCo</title>
+<link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+<link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("css/bootstrap.min.css")">
+</head>
+<body>
+	<div class="container">
+		<div class="row-fluid">
+	  		<div class="span3"></div>
+	  		<div class="span6">
+				@helper.form(routes.Application.authenticate) {
+					<h1>Inloggen</h1>
+					@form.globalError.map { error =>
+					<p class="error">@error.message</p>
+					}
+					@flash.get("success").map { message =>
+					<p class="success">@message</p>
+					}
+					@helper.input(form("name")) { (id, name, value, args) =>
+					<input type="text" name="@name" id="@id"@toHtmlArgs(args)>
+					}
+					@helper.input(form("password")) { (id, name, value, args) =>
+					<input type="password" name="@name" id="@id"@toHtmlArgs(args)>
+					}
+					<p>
+						<button class="btn btn-primary" type="submit">Inloggen</button>
+					</p>
+				}
+			</div>
+			<div class="span3"></div>
+	</div>
+</body>
+</html>
