@@ -1,28 +1,46 @@
 package controllers
 
-import play.api.Play.current
-import play.api.db.DB
 import play.api._
 import play.api.mvc._
+import play.api.data._
+import play.api.data.Forms._
+import play.api.db.DB
+import play.api.Play.current
+
 import anorm._
-//import play.api.cache._
 import play.api.libs.json.Json
 import play.api.libs.json.Json._
 
+import models._
+import views._
+
 object Application extends Controller {
-  
-  def index = Action {
-    Ok(views.html.index("Your new application is ready."))
+
+  val loginForm = Form(
+    tuple(
+      "name" -> text,
+      "password" -> text) verifying ("Invalid username or password", result => result match {
+        case (name, password) => password.equals("vioolkast") && User.authenticate(name).isDefined 
+      }))
+
+  def login = Action { implicit request =>
+    Ok(views.html.login(loginForm))
   }
-  
-  def geo(lat: String, long: String) = Action {//Cached(req => "geo")
+
+  def authenticate = Action { implicit request =>
+    loginForm.bindFromRequest.fold(
+      formWithErrors => BadRequest(views.html.login(formWithErrors)),
+      user => Redirect(routes.Dashboard.index).withSession("name" -> "Nanne"))
+  }
+
+  def geo(lat: String, long: String) = Action { //Cached(req => "geo")
     def parseDouble(s: String) = try { Some(s.toDouble) } catch { case _ => 0 }
     DB.withConnection("osm") { implicit c =>
-    	def point:String = "POINT("+long.toDouble.toString()+" "+lat.toDouble.toString+")"
-    	
-    	def radius = math.floor((5500 / 3600) * 15 * 60)
-    	Ok(toJson(SQL(
-    	    """
+      def point: String = "POINT(" + long.toDouble.toString() + " " + lat.toDouble.toString + ")"
+
+      def radius = math.floor((5500 / 3600) * 15 * 60)
+      Ok(toJson(SQL(
+        """
     	    select ST_AsGeoJSON(
     			ST_Intersection(linestring, ST_Buffer(ST_GeographyFromText({point}),{radius}))
     	    , 7) as geometry,
@@ -30,39 +48,27 @@ object Application extends Controller {
     	    from ways
     	    where foot and ST_Intersects(ST_Buffer(ST_GeographyFromText({point}),{radius}), linestring)
     	    order by distance asc limit 1000;
-    	"""
-    	    ).on("point" -> point, "radius" -> radius)().map({t => Json.parse(t[String]("geometry"))}) toList))
-    	
-//    	Ok(toJson(SQL("""
-//select ST_AsGeoJSON(nodes.geom) as geometry
-//from ways
-//join way_nodes on ways.id = way_nodes.way_id
-//join nodes on way_nodes.node_id = nodes.id
-//where foot and ST_Intersects(ST_Buffer(ST_GeographyFromText({point}),{radius}), linestring) and
-//ST_Intersects(ST_Buffer(ST_GeographyFromText({point}),{radius}), nodes.geom) and
-//(select count(way_id) from way_nodes where node_id = nodes.id) > 1
-//    	""").on("point" -> point, "radius" -> radius)().map({t => Json.parse(t[String]("geometry"))}) toList))
-    	    
-//    	Ok(toJson(SQL("""
-//select 
-//ST_AsGeoJSON(ST_ConvexHull(ST_Collect(ST_Intersection(linestring::geometry, ST_Buffer(ST_GeographyFromText({point}),{radius})::geometry)))) as geometry
-//from ways
-//where foot and
-//ST_Intersects(ST_Buffer(ST_GeographyFromText({point}),{radius}), linestring)
-//    	""").on("point" -> point, "radius" -> radius)().map({t => Json.parse(t[String]("geometry"))}) toList))//group by id
-    	
-//    	
-//    	Ok(toJson(SQL("""
-//    	    WITH nearby_ways AS (SELECT * FROM ways WHERE foot and ST_Intersects(ST_Buffer(ST_GeographyFromText({point}),{radius}), linestring))
-//SELECT geom as geometry,
-//(SELECT id FROM nearby_ways order by ST_Distance(linestring, geom) asc limit 1) as way_id
-//FROM (
-//  SELECT (ST_DumpPoints(g.geom)).*
-//  FROM
-//  (select
-//ST_ConvexHull(ST_Collect(ST_Intersection(linestring::geometry, ST_Buffer(ST_GeographyFromText({point}),{radius})::geometry))) as geom
-//from nearby_ways) as g) as j;
-//    	    """).on("point" -> point, "radius" -> radius)().map({t => Json.parse(t[String]("geometry"))}) toList))
+    	""").on("point" -> point, "radius" -> radius)().map({ t => Json.parse(t[String]("geometry")) }) toList))
     }
+  }
+
+}
+/**
+ * Provide security features
+ */
+trait Secured {
+  /**
+   * Retrieve the connected user email.
+   */
+  private def username(request: RequestHeader) = request.session.get("name")
+  /**
+   * Redirect to login if the user in not authorized.
+   */
+  private def onUnauthorized(request: RequestHeader) = Results.Redirect(routes.Application.login)
+  /**
+   * Action for authenticated users.
+   */
+  def IsAuthenticated(f: => String => Request[AnyContent] => Result) = Security.Authenticated(username, onUnauthorized) { user =>
+    Action(request => f(user)(request))
   }
 }
