@@ -29,6 +29,18 @@ Installeren
 - http://postgis.refractions.net/download/windows/
 - http://mycel.nl/gelderland.gz (420mb)
 
+De database maken:
+
+    CREATE DATABASE osmosis;
+    USE osmosis;
+    CREATE EXTENSION postgis;
+    CREATE EXTENSION hstore;
+    CREATE DATABASE geoco;
+    USE geoco;
+    CREATE EXTENSION postgis;
+
+Daarna het Gederland.gz bestand inladen op de osmosis database.
+
 Usefull links
 -------------
 
