@@ -13,8 +13,12 @@ project/plugins/project/
 .scala_dependencies
 
 # the rest
+.idea
 .cache
 .DS_Store
 .classpath
 .target
 tiles/
+.project
+.settings/
+.idea_modules
