@@ -4,6 +4,4 @@ class @views.Dashboard extends Backbone.View
     events:
         "click .brand": "reset"
     reset: -> false
-    initialize: ->
-        console.log 'test'
-        @map = new views.Maps
+    initialize: -> @map = new views.Maps
