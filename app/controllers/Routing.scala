@@ -1,17 +1,13 @@
 package controllers
 
-import play.api.Play.current
 import play.api.db.DB
-import play.api._
 import play.api.mvc._
 import anorm._
-import play.api.cache._
-import play.api.libs.json.Json
 import play.api.libs.json.Json._
 import play.api.libs.json._
 
 object Routing extends Controller {
-  def route(lat: String, long: String) = Action { //Cached(req => "geo")
+  def route(lat: String, long: String) = Action {
     def radius = math.floor(5500 / 3600) * 15 * 60
     def parseDouble(s: String) = try Some(s.toDouble) catch { case _ => 0 }
 
