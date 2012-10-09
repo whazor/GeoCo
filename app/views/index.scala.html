@@ -2,24 +2,27 @@
 
 <!DOCTYPE html>
 <html lang="nl">
-<head>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-<title>geoco</title>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>geoco</title>
 
-<link rel="stylesheet" href="@routes.Assets.at("css/bootstrap.min.css")">
-<link rel="stylesheet" href="@routes.Assets.at("css/main.css")">
+        <link rel="stylesheet" href="@routes.Assets.at("css/bootstrap.min.css")">
+        <link rel="stylesheet" href="@routes.Assets.at("css/main.css")">
 
-<link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
 
-<script src="@routes.Assets.at("javascripts/jquery-1.7.1.min.js")"></script>
-<script
-	src="//maps.googleapis.com/maps/api/js?key=AIzaSyCX7j8_4dYVHYZ5w4VBYaC7zc8WTKwKmm0&sensor=false"></script>
-<script src="@routes.Assets.at("javascripts/main.js")"></script>
-</head>
+        <script src="@routes.Assets.at("javascripts/jquery-1.7.1.min.js")"></script>
+        <script src="@routes.Assets.at("javascripts/underscore-min.js")"></script>
+        <script src="@routes.Assets.at("javascripts/backbone-min.js")"></script>
+        <script
+            src="//maps.googleapis.com/maps/api/js?key=AIzaSyCX7j8_4dYVHYZ5w4VBYaC7zc8WTKwKmm0&sensor=false"></script>
+        <script src="@routes.Assets.at("javascripts/views/dashboard.js")"></script>
+        <script src="@routes.Assets.at("javascripts/views/maps.js")"></script>
+        <script src="@routes.Assets.at("javascripts/main.js")"></script>
+    </head>
 <body>
-
-	<div class="container">
+	<div class="container" id="app">
 		<div class="navbar">
 			<div class="navbar-inner">
 				<a class="brand" href="#">geoco</a>
