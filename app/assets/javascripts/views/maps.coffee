@@ -3,7 +3,6 @@ m = google.maps
 class @views.Maps extends Backbone.View
     el: '#maps'
     initialize: ->
-        mapOptions =
         map = new google.maps.Map @el
             zoom: 13,
             mapTypeId: google.maps.MapTypeId.ROADMAP
