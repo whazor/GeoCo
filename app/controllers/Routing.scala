@@ -19,6 +19,8 @@ object Routing extends Controller {
         override def toString = "POINT(" + long + " " + lat + ")"
       }
 
+      def center = LatLng(lat, long)
+
       case class Edge(node1: Long, node2: Long, distance: BigDecimal)
 
       def edgesInGeom(geom: String) =
@@ -26,8 +28,8 @@ object Routing extends Controller {
       with intersections as (
       select way_nodes.*, nodes.geom as geom, ways.linestring as linestring
       from way_nodes
-      join nodes on way_nodes.node_id = nodes.id and nodes.geom && ST_MakeEnvelope(5.829330, 51.934978, 5.980750, 52.008572, 4326)
-      join ways on ways.id = way_nodes.way_id and ST_Intersects(ways.linestring, ST_MakeEnvelope(5.829330, 51.934978, 5.980750, 52.008572, 4326)) and ways.foot
+      join nodes on way_nodes.node_id = nodes.id and ST_Intersects(nodes.geom, {geom})
+      join ways on ways.id = way_nodes.way_id and ST_Intersects(ways.linestring, {geom}) and ways.foot
       where (select count(*) from way_nodes where way_nodes.node_id = nodes.id group by way_nodes.node_id) > 1)
       select
       w1.node_id as node_1,
