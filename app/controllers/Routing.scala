@@ -1,5 +1,6 @@
 package controllers
 
+import play.api.Play.current
 import play.api.db.DB
 import play.api.mvc._
 import anorm._
@@ -32,6 +33,10 @@ object Routing extends Controller {
       w1.node_id as node_1,
       w2.node_id as node_2,
       w1.way_id as way,
+      ST_Line_Substring(w1.linestring,
+      LEAST(ST_Line_Locate_Point(w1.linestring, w1.geom), ST_Line_Locate_Point(w1.linestring, w2.geom)),
+      GREATEST(ST_Line_Locate_Point(w1.linestring, w1.geom), ST_Line_Locate_Point(w1.linestring, w2.geom))
+      )::Geography as line,
       ST_Length(ST_Line_Substring(w1.linestring,
         LEAST(ST_Line_Locate_Point(w1.linestring, w1.geom), ST_Line_Locate_Point(w1.linestring, w2.geom)),
         GREATEST(ST_Line_Locate_Point(w1.linestring, w1.geom), ST_Line_Locate_Point(w1.linestring, w2.geom))
@@ -39,7 +44,8 @@ object Routing extends Controller {
       from intersections w1
       join intersections w2 on w1.way_id = w2.way_id and w1.node_id != w2.node_id
       where @(w1.sequence_id - w2.sequence_id) = 1
-      """).on("geom" -> geom)().toList.map({ t =>
+          """.stripMargin).on("geom" -> geom)().toList.map({ t =>
+        //order by ST_Distance(w1.linestring, ST_GeomFromText('POINT(5.859330 51.974978)', 4326)) asc
         val node1 = t[Long]("node_1")
         val node2 = t[Long]("node_2")
 //        val way = t[Long]("way")
@@ -50,19 +56,17 @@ object Routing extends Controller {
       def edgesInRadius(center:LatLng, radius:Double) =
         edgesInGeom("ST_Buffer(ST_GeomFromText(\""+center+"\"), "+radius+")")
 
-//      def roadsNearestTo(loc:LatLng) : Road = {
-//      def t = SQL("""
-//	      select id,
-//	      ST_AsGeoJSON(ST_Line_Interpolate_Point(linestring, ST_Line_Locate_Point(linestring, ST_GeographyFromText({point})::Geometry))) as geometry
-//	      from ways
-//	      where foot and ST_DWithin(linestring, ST_GeographyFromText({point}), {distance})
-//	      order by ST_Distance(linestring, ST_GeographyFromText({point})) asc limit 1
-//                  	      """).on("point" -> center.toString, "distance" -> 100)().head
-//      val json = Json.parse(t[String]("geometry"))
-//      val point = new Point((json \ "coordinates").as[Seq[Double]])
-//      val centerRoadPoint = RoadPoint(t[Long] { "id" }, point)
+      def nodeNearestTo(loc:LatLng): Long =
+        SQL(
+          """
+            select id
+            from nodes
+            where (select count(*) from way_nodes where way_nodes.node_id = nodes.id group by way_nodes.node_id) > 1
+            order by geom <-> ST_GeomFromText({POINT}, 4326) limit 1;
+          """.stripMargin).on('point -> loc)().head[Long]("id")
 //      }
 
+      Ok("werkt")
     }
   }
 }
