@@ -12,13 +12,13 @@ object Routing extends Controller {
     DB.withConnection("OSM") { implicit c =>
       def radius = math.floor(5500 / 3600) * 15 * 60
 
-      case class LatLng(long: Double, lat: Double) {
-        def this(inputLong: String, inputLat: String) = this(inputLong.toDouble, inputLat.toDouble)
-        def this(input: Seq[Double]) = this(input(0), input(1))
+      object LatLng {
+        def apply(inputLong: String, inputLat: String): LatLng = LatLng(inputLong.toDouble, inputLat.toDouble)
+        def apply(input: Seq[Double]):LatLng = LatLng(input(0), input(1))
         def array = Seq(long, lat)
         override def toString = "POINT(" + long + " " + lat + ")"
       }
-
+      case class LatLng(long: Double, lat: Double)
       def center = LatLng(lat, long)
 
       case class Edge(node1: Long, node2: Long, distance: BigDecimal)
