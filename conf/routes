@@ -6,8 +6,6 @@
 GET     /                           	controllers.Dashboard.index
 GET		/login							controllers.Application.login
 POST	/login							controllers.Application.authenticate
-GET		/geo/:lat/:long					controllers.Application.geo(lat: String, long: String)
-
 GET		/route/:lat/:long				controllers.Routing.route(lat: String, long: String)
 
 # Map static resources from the /public folder to the /assets URL path
