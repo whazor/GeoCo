@@ -1,5 +1,4 @@
 @(message: String)
-
 <!DOCTYPE html>
 <html lang="nl">
     <head>
@@ -19,6 +18,7 @@
             src="//maps.googleapis.com/maps/api/js?key=AIzaSyCX7j8_4dYVHYZ5w4VBYaC7zc8WTKwKmm0&sensor=false"></script>
         <script src="@routes.Assets.at("javascripts/views/dashboard.js")"></script>
         <script src="@routes.Assets.at("javascripts/views/maps.js")"></script>
+        <script src="@routes.Assets.at("javascripts/views/hints.js")"></script>
         <script src="@routes.Assets.at("javascripts/main.js")"></script>
     </head>
 <body>
@@ -26,22 +26,20 @@
 		<div class="navbar">
 			<div class="navbar-inner">
 				<a class="brand" href="#">geoco</a>
-
-				<form class="navbar-form pull-left"  style="margin-right: 10px;">
+				<div class="navbar-form pull-left">
 					<button type="submit" class="btn">Hunt melden</button>
-				</form>
-				<form class="navbar-form pull-left">
-					<input type="text" placeholder="Adres zoeken">
-				</form>
+                    <button type="submit" class="btn">Tegenhunt melden</button>
+                    <input type="text" placeholder="Adres zoeken">
+				</div>
 			</div>
 		</div>
 		<div class="row">
 			<div class="span6 mapholder">
 				<div id="maps" style="width: 100%; height: 700px;"></div>
 			</div>
-			<div class="span6">
+			<div class="span6" id="hints">
 				<table class="hints table table-bordered">
-					<thead>
+                    <thead>
 						<tr>
 							<th>Tijd:</th>
 							<th class="alpha">Alpha</th>
@@ -53,56 +51,6 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr>
-							<td>10:00</td>
-							<td><button class="btn">Invullen</button></td>
-							<td><button class="btn">Invullen</button></td>
-							<td><button class="btn">Invullen</button></td>
-
-							<td><button class="btn">Invullen</button></td>
-							<td><button class="btn">Invullen</button></td>
-							<td><button class="btn">Invullen</button></td>
-						</tr>
-						<tr>
-							<td>11:00</td>
-							<td><button class="btn">Invullen</button></td>
-							<td><button class="btn">Invullen</button></td>
-							<td><button class="btn">Invullen</button></td>
-
-							<td><button class="btn">Invullen</button></td>
-							<td><button class="btn">Invullen</button></td>
-							<td><button class="btn">Invullen</button></td>
-						</tr>
-						<tr>
-							<td>12:00</td>
-							<td><button class="btn">Invullen</button></td>
-							<td><button class="btn">Invullen</button></td>
-							<td><button class="btn">Invullen</button></td>
-
-							<td><button class="btn">Invullen</button></td>
-							<td><button class="btn">Invullen</button></td>
-							<td><button class="btn">Invullen</button></td>
-						</tr>
-						<tr>
-							<td>13:00</td>
-							<td><button class="btn">Invullen</button></td>
-							<td><button class="btn">Invullen</button></td>
-							<td><button class="btn">Invullen</button></td>
-
-							<td><button class="btn">Invullen</button></td>
-							<td><button class="btn">Invullen</button></td>
-							<td><button class="btn">Invullen</button></td>
-						</tr>
-						<tr>
-							<td>14:00</td>
-							<td><button class="btn">Invullen</button></td>
-							<td><button class="btn">Invullen</button></td>
-							<td><button class="btn">Invullen</button></td>
-
-							<td><button class="btn">Invullen</button></td>
-							<td><button class="btn">Invullen</button></td>
-							<td><button class="btn">Invullen</button></td>
-						</tr>
 					</tbody>
 				</table>
 			</div>
