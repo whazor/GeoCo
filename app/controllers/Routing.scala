@@ -6,19 +6,13 @@ import play.api.mvc._
 import anorm._
 import play.api.libs.json.Json._
 import play.api.libs.json._
+import models.LatLng
 
 object Routing extends Controller {
   def route(lat: String, long: String) = Action {
     DB.withConnection("OSM") { implicit c =>
       def radius = math.floor(5500 / 3600) * 15 * 60
 
-      object LatLng {
-        def apply(inputLong: String, inputLat: String): LatLng = LatLng(inputLong.toDouble, inputLat.toDouble)
-        def apply(input: Seq[Double]):LatLng = LatLng(input(0), input(1))
-        def array = Seq(long, lat)
-        override def toString = "POINT(" + long + " " + lat + ")"
-      }
-      case class LatLng(long: Double, lat: Double)
       def center = LatLng(lat, long)
 
       case class Edge(node1: Long, node2: Long, distance: BigDecimal)
