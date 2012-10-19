@@ -139,17 +139,17 @@ object Coordinate {
       //  ST_AsText(ST_Transform(ST_SetSRID(ST_Point(21075, 46821), 28991), 4326))
       val r = raw.split(Array(',', ' ', ';'))
 
-      val r1 = r(1).toDouble
-      val r2 = r(2).toDouble
+      val r1 = r(0)
+      val r2 = r(1)
 
-      val srid = if (r1 < 100 && r2 < 100) { 4326 } else { 28992 }
-      val x = if(srid == 4326) { r2 } else { math.pow(10, math.min(0, 6-(""+r1).length)) * r1 }
-      val y = if(srid == 4326) { r1 } else { math.pow(10, math.min(0, 6-(""+r2).length)) * r2 }
+      val srid = if (r1.toDouble < 100 && r2.toDouble < 100) { 4326 } else { 28992 }
+      val x = if(srid == 4326) { r2.toDouble } else { math.pow(10, math.max(0, 6-(""+r1).length)) * r1.toDouble }
+      val y = if(srid == 4326) { r1.toDouble } else { math.pow(10, math.max(0, 6-(""+r2).length)) * r2.toDouble }
 
       val insertId = SQL(
         """
         INSERT INTO hints(fox_group, created_at, user_id, raw, point, hint_hour)
-        VALUES ({fox_group}, NOW(), {user_id}, {raw}, ST_SetSRID(ST_Point({x}, {y}), {srid}), {hour})
+        VALUES ({fox_group}, NOW(), {user_id}, {raw}, ST_Transform(ST_SetSRID(ST_Point({x}, {y}), {srid}), 4326), {hour})
         """).on(
           'fox_group -> fox_group,
           'user_id -> user.id,
