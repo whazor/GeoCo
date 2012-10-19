@@ -71,13 +71,13 @@ object Coordinate {
       val p1:String = point.stripPrefix("POINT(")
       val p2:String = p1.stripSuffix(")")
       def c = p2.split(" ")
-      Hint(id, fox_group, created_at, user_id, raw, LatLng(c(1).toDouble, c(0).toDouble), time, hour)
+      Hint(id, fox_group, created_at, user_id, raw, LatLng(c(0).toDouble, c(1).toDouble), time, hour)
     }
     case "hunt"~id~fox_group~created_at~user_id~raw~point~time~(found_at:Date) => {
       val p1:String = point.stripPrefix("POINT(")
       val p2:String = p1.stripSuffix(")")
       def c = p2.split(" ")
-      Hunt(id, fox_group, created_at, user_id, raw, LatLng(c(1).toDouble, c(0).toDouble), time, found_at)
+      Hunt(id, fox_group, created_at, user_id, raw, LatLng(c(0).toDouble, c(1).toDouble), time, found_at)
     }
   }
   val sqlCoordinate =
