@@ -13,6 +13,7 @@ CREATE TABLE coordinates
 	fox_group TEXT NOT NULL,   
 	created_at TIMESTAMP NOT NULL,
 	user_id INTEGER REFERENCES users ON DELETE SET NULL,
+	raw TEXT NOT NULL,
 	point GEOMETRY(Point,4326)
 );
 
@@ -25,7 +26,7 @@ CREATE TABLE hunts (
 ) INHERITS (coordinates);
 
 # --- !Downs
-DROP TABLE hints;
-DROP TABLE hunts;
-DROP TABLE coordinates;
-DROP TABLE users;
+DROP TABLE hints CASCADE;
+DROP TABLE hunts CASCADE;
+DROP TABLE coordinates CASCADE;
+DROP TABLE users CASCADE;

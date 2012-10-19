@@ -128,18 +128,30 @@ object Coordinate {
     }
   }
 
-  def createHint(fox_group: String, user: User, point: LatLng, hour: Int): Option[Coordinate] = {
+  def createHint(fox_group: String, user: User, raw: String, hour: Int): Option[Coordinate] = {
     DB.withConnection { implicit connection =>
+      //  ST_AsText(ST_Transform(ST_SetSRID(ST_Point(21075, 46821), 28991), 4326))
+      val r = raw.split(Array(',', ' ', ';'))
+
+      val r1 = r(1).toDouble
+      val r2 = r(2).toDouble
+
+      val srid = if (r1 < 100 && r2 < 100) { 4326 } else { 28992 }
+      val x = if(srid == 4326) { r2 } else { math.pow(10, math.min(0, 6-(""+r1).length)) * r1 }
+      val y = if(srid == 4326) { r1 } else { math.pow(10, math.min(0, 6-(""+r2).length)) * r2 }
+
       val insertId = SQL(
         """
-        INSERT INTO hints(fox_group, created_at, user_id, point, hint_hour)
-        VALUES ({fox_group}, NOW(), {user_id}, ST_SetSRID(ST_Point({long}, {lat}), 4326), {hour})
+        INSERT INTO hints(fox_group, created_at, user_id, raw, point, hint_hour)
+        VALUES ({fox_group}, NOW(), {user_id}, {raw}, ST_SetSRID(ST_Point({x}, {y}), {srid}), {hour})
         """).on(
           'fox_group -> fox_group,
           'user_id -> user.id,
-          'long -> point.long,
-          'lat -> point.lat,
-          'hour -> hour
+          'raw -> raw,
+          'x -> x,
+          'y -> y,
+          'hour -> hour,
+          'srid -> srid
         ).executeInsert()
       insertId match {
         case Some(id) => getById(id, "hints")

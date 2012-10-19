@@ -30,8 +30,7 @@ object Coordinates extends Controller with Secured {
     tuple(
       "fox_group" -> text,
       "hour" -> number,
-      "lng" -> text,
-      "lat" -> text
+      "raw" -> text
     )
   )
 //  def read(id: Long) = IsAuthenticated { (user, request) =>
@@ -50,7 +49,7 @@ object Coordinates extends Controller with Secured {
             Coordinate.createHint(
               value._1,
               user,
-              LatLng(value._3, value._4),
+              value._3,
               value._2
             ).get.toJson
           )
