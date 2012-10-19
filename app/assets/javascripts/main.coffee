@@ -8,6 +8,8 @@ $ =>
   dashboard = new views.Dashboard
   @Clock.start 1000
 
+
+
 window.fox_groups = ["alpha", "bravo", "charlie", "delta", "echo", "foxtrot"]
 window.fox_colors =
   alpha: "#9d261d"
@@ -18,11 +20,16 @@ window.fox_colors =
   foxtrot: "#c3325f"
 window.MapHour = (i) ->
   ToDate: ->
-    if i < 15 then new Date(2012, 10, 20, i + 9, 0, 0)
-    else new Date(2012, 10, 21, i - 15, 0, 0)
+    base = new Date(2012, 10, 20, 9, 0, 0)
+    base.setHours base.getHours() + i
+    base
   ToString: ->
     date = MapHour(i).ToDate()
     "#{date.getHours()}:00"
+window.MapTime = (time) ->
+  ToHour: ->
+    base = new Date(2012, 10, 20, 9, 0, 0)
+    (time - base) / 1000 / 60 / 60
 
 class @Clock
   @listeners = []

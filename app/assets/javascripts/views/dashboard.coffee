@@ -2,8 +2,14 @@
 class @views.Dashboard extends Backbone.View
     el: '#app'
     events:
-        "click .brand": "reset"
-    reset: -> false
+        "click .brand": -> false,
+        "keydown #Search": (e) ->
+          return unless e.keyCode == 13
+          val = $("#Search", @$el).val()
+          window.geocoder.geocode address: val, ([result], status) ->
+            return unless status = google.maps.GeocoderStatus.OK
+            map.setCenter(result.geometry.location)
+            map.setZoom(13)
     initialize: (coordinates) ->
         @maps = new views.Maps window.hints, window.hunts
         @hints = new views.Hints window.hints

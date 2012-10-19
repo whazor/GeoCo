@@ -7,7 +7,7 @@
         data:
           id: lastUpdate
       collection.on "add", (model) ->
-        lastUpdate = Math.max lastUpdate, model.id
+        lastUpdate = Math.max lastUpdate, (model.id ? -1000)
 
 class Coordinate extends Backbone.Model
 
