@@ -5,18 +5,19 @@ class @views.Hints extends Backbone.View
   initialize: (options) ->
     @hints = []
     @render()
-    @collection.bind 'add', @add, @
-    @collection.bind 'reset', (-> _.each @collection.models, @add), @
+    @collection.bind 'add', @set, @
+    @collection.bind 'reset', (-> _.each @collection.models, @set), @
 
 
 
-  add: (h) =>
+  set: (h) =>
     @hints[parseInt h.get 'hour'][h.get 'fox_group'].bind h
+
   render: =>
     @$el.empty()
-    for time in [9..15]
+    for time in [0..30]
       @hints[time] ||= []
-      tr = $ "<tr><th>#{time}:00</th></tr>"
+      tr = $ "<tr><th>#{window.MapTime(time).ToString()}</th></tr>"
       for name, index in ["alpha", "bravo", "charlie", "delta", "echo", "foxtrot"]
         hint = @hints[time][name] = new Hint index, name, time
         tr.append hint.el
