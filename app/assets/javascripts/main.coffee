@@ -1,10 +1,13 @@
 $ =>
-  col = new models.CoordinateCollection
-  col.fetch error: (error) -> setTimeout col.fetch, 5000
-  dashboard = new views.Dashboard collection: col
-  class @Clock
-    @start: (@interval) ->
-      ""
+  window.hints = new window.HintCollection
+  window.hunts = new window.HuntCollection
+
+  @utilities.AutoUpdate window.hints
+  @utilities.AutoUpdate window.hunts
+
+  dashboard = new views.Dashboard
+  @Clock.start 1000
+
 window.MapTime = (i) ->
   ToDate: ->
     if i < 15 then new Date(2012, 10, 20, i + 9, 0, 0)
@@ -12,3 +15,15 @@ window.MapTime = (i) ->
   ToString: ->
     date = MapTime(i).ToDate()
     "#{date.getHours()}:00"
+
+class @Clock
+  @listeners = []
+
+  @start: (@interval) ->
+    @id = setInterval @tick, @interval
+
+  @tick = =>
+    for listener in @listeners
+      listener()
+  @stop: ->
+    clearInterval @id
