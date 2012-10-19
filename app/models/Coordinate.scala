@@ -102,33 +102,34 @@ object Coordinate {
     }
   }
 
-  def getById(id: Long): Option[Coordinate] = {
+  def getById(id: Long, sort: String): Option[Coordinate] = {
     DB.withConnection { implicit connection =>
-      SQL(
-        """
-          select 'hint',""" + sqlCoordinate + """, publiced_at
-          from hints where coordinate_id = {id}
-          union all
+      sort match {
+        case "hints" => SQL("""
+          select 'hint',""" + sqlCoordinate + """, hint_hour
+          from hints where coordinate_id = {id} limit 1""").on("id" -> id).as(Coordinate.simple.singleOpt)
+        case "hunts" => SQL("""
           select 'hunt',""" + sqlCoordinate + """, found_at
-          from hunts where coordinate_id = {id}
-        """).on("id" -> id).as(Coordinate.simple.singleOpt)
+          from hints where coordinate_id = {id} limit 1""").on("id" -> id).as(Coordinate.simple.singleOpt)
+      }
     }
   }
 
-  def createHint(fox_group: String, user: User, point: LatLng, publiced_at: Date): Option[Coordinate] = {
+  def createHint(fox_group: String, user: User, point: LatLng, hour: Int): Option[Coordinate] = {
     DB.withConnection { implicit connection =>
       val insertId = SQL(
         """
-        INSERT INTO hints(fox_group, created_at, user_id, point, publiced_at)
-        VALUES ({fox_group}, NOW(), {user_id}, {point}, {publiced_at})
+        INSERT INTO hints(fox_group, created_at, user_id, point, hint_hour)
+        VALUES ({fox_group}, NOW(), {user_id}, ST_SetSRID(ST_Point({long}, {lat}), 4326), {hour})
         """).on(
           'fox_group -> fox_group,
           'user_id -> user.id,
-          'point -> point,
-          'publiced_at -> publiced_at
+          'long -> point.long,
+          'lat -> point.lat,
+          'hour -> hour
         ).executeInsert()
       insertId match {
-        case Some(id) => getById(id)
+        case Some(id) => getById(id, "hints")
         case None => None
       }
     }
