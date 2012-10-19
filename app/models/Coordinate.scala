@@ -6,21 +6,22 @@ import anorm._
 import anorm.SqlParser._
 import java.util.Date
 import play.api.libs.json._
+import ch.qos.logback.classic.pattern.DateConverter
 
 abstract class Coordinate() {
   def id: Pk[Long]
   def fox_group: String
   def created_at: Date
   def user_id: Pk[Int]
-//    def user: => User
   def user(): Option[User] = User.getById(user_id.get)
   def point: LatLng
- // def nearest_way_id: Pk[Long]
+  def time: Date
   def toJson: JsValue
   def map: Map[String, JsValue] = Map(
     "id" -> Json.toJson(id.get),
     "fox_group" -> Json.toJson(fox_group),
-    "created_at" -> Json.toJson(created_at.toString()),
+    "created_at" -> Json.toJson(created_at.getTime()),
+    "time" -> Json.toJson(time.getTime()),
     "user_id" -> Json.toJson(user_id.get),
     "point" -> Json.toJson(point.array)
   )
@@ -31,7 +32,7 @@ case class Hint(
     created_at: Date,
     user_id: Pk[Int],
     point: LatLng,
-    //nearest_way_id: Pk[Long],
+    time: Date,
     hour: Int
     ) extends Coordinate {
   def toJson: JsValue = Json.toJson(map ++ Map("hour" -> Json.toJson(hour)))
@@ -42,7 +43,7 @@ case class Hunt(
     created_at: Date,
     user_id: Pk[Int],
     point: LatLng,
-//    nearest_way_id: Pk[Long],
+    time: Date,
     found_at: Date
     ) extends Coordinate {
   def toJson: JsValue = Json.toJson(map ++ Map("found_at" -> Json.toJson(found_at.toString())))
@@ -57,44 +58,55 @@ object Coordinate {
     get[Pk[Int]]("user_id") ~
     get[String]("point") ~
     //get[Pk[Long]]("nearest_way_id") ~
+    get[Date]("hint_time") ~
     (get[Date]("found_at") | get[Int]("hint_hour"))
   } map {
-    case "hint"~id~fox_group~created_at~user_id~point~(hour:Int) => {
+    case "hint"~id~fox_group~created_at~user_id~point~time~(hour:Int) => {
       val p1:String = point.stripPrefix("POINT(")
       val p2:String = p1.stripSuffix(")")
       def c = p2.split(" ")
-      Hint(id, fox_group, created_at, user_id, LatLng(c(0).toDouble, c(1).toDouble), hour)
+      Hint(id, fox_group, created_at, user_id, LatLng(c(0).toDouble, c(1).toDouble), time, hour)
     }
-    case "hunt"~id~fox_group~created_at~user_id~point~(found_at:Date) => {
+    case "hunt"~id~fox_group~created_at~user_id~point~time~(found_at:Date) => {
       val p1:String = point.stripPrefix("POINT(")
       val p2:String = p1.stripSuffix(")")
       def c = p2.split(" ")
-      Hunt(id, fox_group, created_at, user_id, LatLng(c(0).toDouble, c(1).toDouble), found_at)
+      Hunt(id, fox_group, created_at, user_id, LatLng(c(0).toDouble, c(1).toDouble), time, found_at)
     }
   }
   val sqlCoordinate =
     """
-      coordinate_id,
-      fox_group,
-      created_at,
-      ST_AsText(point) as point,
-      user_id
-    """.stripMargin // nearest_way_id bigint,
+      |coordinate_id,
+      |fox_group,
+      |created_at,
+      |ST_AsText(point) as point,
+      |user_id
+    """.stripMargin
 
+  val sqlHint =
+    """
+      |, hint_hour
+      |, timestamp '2012-10-20 08:55:00' + (20 || ' hours')::interval as hint_time
+    """.stripMargin
+  val sqlHunt =
+    """
+      |, found_at
+      |, found_at as hint_time
+    """.stripMargin
   def allFromId(id: Long): Seq[Coordinate] = {
     DB.withConnection { implicit connection =>
       SQL(
         """
             select 'hint' as type,
-        """ + sqlCoordinate +
-          """, hint_hour
+        """ + sqlCoordinate + sqlHint +
+          """
           from hints
           where coordinate_id > {id}
           """).on("id" -> id).as(Coordinate.simple *) ++
       SQL(
         """
          select 'hunt' as type,
-        """ + sqlCoordinate +
+        """ + sqlCoordinate + sqlHunt +
           """, found_at
           from hunts
           where coordinate_id > {id}
@@ -106,10 +118,10 @@ object Coordinate {
     DB.withConnection { implicit connection =>
       sort match {
         case "hints" => SQL("""
-          select 'hint' as type,""" + sqlCoordinate + """, hint_hour
+          select 'hint' as type,""" + sqlCoordinate + sqlHint + """
           from hints where coordinate_id = {id} limit 1""").on("id" -> id).as(Coordinate.simple.singleOpt)
         case "hunts" => SQL("""
-          select 'hunt' as type,""" + sqlCoordinate + """, found_at
+          select 'hunt' as type,""" + sqlCoordinate + sqlHunt + """
           from hints where coordinate_id = {id} limit 1""").on("id" -> id).as(Coordinate.simple.singleOpt)
       }
     }
