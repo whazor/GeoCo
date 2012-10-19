@@ -5,16 +5,25 @@ import play.api.Play.current
 import anorm._
 import anorm.SqlParser._
 import java.util.Date
+import play.api.libs.json._
 
 abstract class Coordinate() {
-    def id: Pk[Long]
-    def fox_group: String
-    def created_at: Date
-    def user_id: Pk[Int]
+  def id: Pk[Long]
+  def fox_group: String
+  def created_at: Date
+  def user_id: Pk[Int]
 //    def user: => User
-    def user(): Option[User] = User.getById(user_id.get)
-    def point: LatLng
-   // def nearest_way_id: Pk[Long]
+  def user(): Option[User] = User.getById(user_id.get)
+  def point: LatLng
+ // def nearest_way_id: Pk[Long]
+  def toJson: JsValue
+  def map: Map[String, JsValue] = Map(
+    "id" -> Json.toJson(id.get),
+    "fox_group" -> Json.toJson(fox_group),
+    "created_at" -> Json.toJson(created_at.toString()),
+    "user_id" -> Json.toJson(user_id.get),
+    "point" -> Json.toJson(point.array)
+  )
 }
 case class Hint(
     id: Pk[Long],
@@ -24,7 +33,9 @@ case class Hint(
     point: LatLng,
     //nearest_way_id: Pk[Long],
     publiced_at: Date
-    ) extends Coordinate
+    ) extends Coordinate {
+  def toJson: JsValue = Json.toJson(map ++ Map("publiced_at" -> Json.toJson(publiced_at.toString())))
+}
 case class Hunt(
     id: Pk[Long],
     fox_group: String,
@@ -33,7 +44,9 @@ case class Hunt(
     point: LatLng,
 //    nearest_way_id: Pk[Long],
     found_at: Date
-    ) extends Coordinate
+    ) extends Coordinate {
+  def toJson: JsValue = Json.toJson(map ++ Map("found_at" -> Json.toJson(found_at.toString())))
+}
 
 object Coordinate {
   val simple = {
@@ -42,16 +55,18 @@ object Coordinate {
     get[String]("fox_group") ~
     get[Date]("created_at") ~
     get[Pk[Int]]("user_id") ~
-    get[String]("coordinate") ~
+    get[String]("point") ~
     //get[Pk[Long]]("nearest_way_id") ~
-    (get[Date]("coordinates.found_at") | get[Date]("coordinates.publiced_at"))
+    (get[Date]("found_at") | get[Date]("publiced_at"))
   } map {
-    case "hint"~id~fox_group~created_at~user_id~coordinate~publiced_at => {
-      def c = coordinate.split(",")
+    case "hint"~id~fox_group~created_at~user_id~point~publiced_at => {
+      val p1:String = point.stripPrefix("POINT(")
+      val p2:String = p1.stripSuffix(")")
+      def c = p2.split(" ")
       Hint(id, fox_group, created_at, user_id, LatLng(c(0).toDouble, c(1).toDouble), publiced_at)
     }
-    case "hunt"~id~fox_group~created_at~user_id~coordinate~found_at => {
-      def c = coordinate.split(",")
+    case "hunt"~id~fox_group~created_at~user_id~point~found_at => {
+      def c = "1,4".split(",")
       Hunt(id, fox_group, created_at, user_id, LatLng(c(0).toDouble, c(1).toDouble), found_at)
     }
   }
@@ -60,9 +75,28 @@ object Coordinate {
       coordinate_id,
       fox_group,
       created_at,
-      user_id,
-      point as coordinate
+      ST_AsText(point) as point,
+      user_id
     """.stripMargin // nearest_way_id bigint,
+
+  def all: Seq[Coordinate] = {
+    Coordinate.simple
+    DB.withConnection { implicit connection =>
+      SQL(
+        """
+            select 'hint' as type,""" + sqlCoordinate + """, publiced_at
+            from hints
+            union
+            select 'hunt' as type,""" + sqlCoordinate + """, found_at
+            from hunts
+        """).as(Coordinate.simple *)
+
+//      union all, publiced_at
+//        select 'hunt',""" + sqlCoordinate + """, found_at
+//      from hunts
+    }
+  }
+
   def getById(id: Long): Option[Coordinate] = {
     DB.withConnection { implicit connection =>
       SQL(

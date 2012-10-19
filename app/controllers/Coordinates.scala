@@ -2,26 +2,23 @@ package controllers
 
 import play.api._
 import play.api.mvc._
-import play.api.libs.json.Json
+import libs.json.{JsObject, Json}
 import play.api.libs.json.Json._
+import models.{Hunt, Hint, Coordinate}
 
 object Coordinates extends Controller with Secured {
 
   def list = IsAuthenticated { (user, request) =>
     Ok(toJson(
-      List(
-        Map(
-          "fox_group" -> "alpha",
-          "user" -> "Nanne",
-          "point" -> "1, 4",
-          "hour" -> "13"
-        ),
-        Map(
-          "fox_group" -> "alpha",
-          "user" -> "Nanne",
-          "point" -> "1, 4",
-          "hour" -> "14"
-        )
+      Map(
+        "hints" -> Coordinate.all.filter(c => c match {
+          case x:Hint => true
+          case _ => false
+        }).map(h => h.toJson),
+        "hunts" -> Coordinate.all.filter(c => c match {
+          case x:Hunt => true
+          case _ => false
+        }).map(h => h.toJson)
       )
     ))
   }
