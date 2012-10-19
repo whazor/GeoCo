@@ -14,6 +14,7 @@ abstract class Coordinate() {
   def created_at: Date
   def user_id: Pk[Int]
   def user(): Option[User] = User.getById(user_id.get)
+  def raw: String
   def point: LatLng
   def time: Date
   def toJson: JsValue
@@ -24,7 +25,8 @@ abstract class Coordinate() {
     "time" -> Json.toJson(time.getTime()),
     "user_id" -> Json.toJson(user_id.get),
     "lat" -> Json.toJson(point.lat),
-    "lng" -> Json.toJson(point.long)
+    "lng" -> Json.toJson(point.long),
+    "raw" -> Json.toJson(raw)
   )
 }
 case class Hint(
@@ -32,6 +34,7 @@ case class Hint(
     fox_group: String,
     created_at: Date,
     user_id: Pk[Int],
+    raw: String,
     point: LatLng,
     time: Date,
     hour: Int
@@ -43,6 +46,7 @@ case class Hunt(
     fox_group: String,
     created_at: Date,
     user_id: Pk[Int],
+    raw: String,
     point: LatLng,
     time: Date,
     found_at: Date
@@ -57,22 +61,23 @@ object Coordinate {
     get[String]("fox_group") ~
     get[Date]("created_at") ~
     get[Pk[Int]]("user_id") ~
+    get[String]("raw") ~
     get[String]("point") ~
     //get[Pk[Long]]("nearest_way_id") ~
     get[Date]("hint_time") ~
     (get[Date]("found_at") | get[Int]("hint_hour"))
   } map {
-    case "hint"~id~fox_group~created_at~user_id~point~time~(hour:Int) => {
+    case "hint"~id~fox_group~created_at~user_id~raw~point~time~(hour:Int) => {
       val p1:String = point.stripPrefix("POINT(")
       val p2:String = p1.stripSuffix(")")
       def c = p2.split(" ")
-      Hint(id, fox_group, created_at, user_id, LatLng(c(1).toDouble, c(0).toDouble), time, hour)
+      Hint(id, fox_group, created_at, user_id, raw, LatLng(c(1).toDouble, c(0).toDouble), time, hour)
     }
-    case "hunt"~id~fox_group~created_at~user_id~point~time~(found_at:Date) => {
+    case "hunt"~id~fox_group~created_at~user_id~raw~point~time~(found_at:Date) => {
       val p1:String = point.stripPrefix("POINT(")
       val p2:String = p1.stripSuffix(")")
       def c = p2.split(" ")
-      Hunt(id, fox_group, created_at, user_id, LatLng(c(1).toDouble, c(0).toDouble), time, found_at)
+      Hunt(id, fox_group, created_at, user_id, raw, LatLng(c(1).toDouble, c(0).toDouble), time, found_at)
     }
   }
   val sqlCoordinate =
@@ -80,6 +85,7 @@ object Coordinate {
       |coordinate_id,
       |fox_group,
       |created_at,
+      |raw,
       |ST_AsText(point) as point,
       |user_id
     """.stripMargin
