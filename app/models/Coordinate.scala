@@ -89,7 +89,7 @@ object Coordinate {
         """ + sqlCoordinate +
           """, hint_hour
           from hints
-          where id > {id}
+          where coordinate_id > {id}
           """).on("id" -> id).as(Coordinate.simple *) ++
       SQL(
         """
@@ -97,7 +97,7 @@ object Coordinate {
         """ + sqlCoordinate +
           """, found_at
           from hunts
-          where id > {id}
+          where coordinate_id > {id}
           """).as(Coordinate.simple *)
     }
   }
