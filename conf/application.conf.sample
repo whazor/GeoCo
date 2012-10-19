@@ -24,7 +24,7 @@ application.langs="nl"
 #
 
 db.default.driver=org.postgresql.Driver
-db.default.url="jdbc:postgresql:geoco"
+db.default.url="jdbc:postgresql:geoco?useOldAliasMetadataBehavior=true"
 db.default.user=postgres
 db.osm.driver=org.postgresql.Driver
 db.osm.url="jdbc:postgresql:osmosis"
