@@ -98,7 +98,7 @@ object Coordinate {
           """, found_at
           from hunts
           where coordinate_id > {id}
-          """).as(Coordinate.simple *)
+          """).on("id" -> id).as(Coordinate.simple *)
     }
   }
 
