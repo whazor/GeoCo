@@ -20,20 +20,25 @@ class @views.Hints extends Backbone.View
         @hints[i][j] = new Hint k
         tr.append @hints[i][j].render().el
       @$el.append tr
+
     @$el.on 'click', '.btn-fillin', (e) ->
+      return if $(@) == current
       form = new Form($(@)).render().el
       $(@).popover
         title: 'Hint invoeren'
         placement: $(@).attr 'data-align'
         content: form
-      return if $(@) == current
-      current.popover 'hide' if current
+      if current
+        current.popover 'hide'
+        current = false
       current = $(@)
       $(@).popover 'show'
       $(@).data('popover').$tip.find('form input')[0].focus()
       $(window).unbind 'resize.popover'
       $(window).bind 'resize.popover', -> current.popover 'show'
-      $(form).bind 'close', (e) -> current.popover 'hide'
+      $(form).bind 'close', (e) ->
+        current.popover 'hide'
+        current = false
     @
 
 class Hint extends Backbone.View
