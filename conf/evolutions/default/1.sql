@@ -13,12 +13,11 @@ CREATE TABLE coordinates
 	fox_group TEXT NOT NULL,   
 	created_at TIMESTAMP NOT NULL,
 	user_id INTEGER REFERENCES users ON DELETE SET NULL,
-	point GEOMETRY(Point,4326),
-	nearest_way_id BIGINT
+	point GEOMETRY(Point,4326)
 );
 
 CREATE TABLE hints (
-	publiced_at TIMESTAMP
+	hint_hour INT NOT NULL
 ) INHERITS (coordinates);
 
 CREATE TABLE hunts (
@@ -26,7 +25,7 @@ CREATE TABLE hunts (
 ) INHERITS (coordinates);
 
 # --- !Downs
-DROP TABLE users;
 DROP TABLE hints;
 DROP TABLE hunts;
 DROP TABLE coordinates;
+DROP TABLE users;

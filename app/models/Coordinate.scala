@@ -32,9 +32,9 @@ case class Hint(
     user_id: Pk[Int],
     point: LatLng,
     //nearest_way_id: Pk[Long],
-    publiced_at: Date
+    hour: Int
     ) extends Coordinate {
-  def toJson: JsValue = Json.toJson(map ++ Map("publiced_at" -> Json.toJson(publiced_at.toString())))
+  def toJson: JsValue = Json.toJson(map ++ Map("hour" -> Json.toJson(hour)))
 }
 case class Hunt(
     id: Pk[Long],
@@ -57,16 +57,18 @@ object Coordinate {
     get[Pk[Int]]("user_id") ~
     get[String]("point") ~
     //get[Pk[Long]]("nearest_way_id") ~
-    (get[Date]("found_at") | get[Date]("publiced_at"))
+    (get[Date]("found_at") | get[Int]("hint_hour"))
   } map {
-    case "hint"~id~fox_group~created_at~user_id~point~publiced_at => {
+    case "hint"~id~fox_group~created_at~user_id~point~(hour:Int) => {
       val p1:String = point.stripPrefix("POINT(")
       val p2:String = p1.stripSuffix(")")
       def c = p2.split(" ")
-      Hint(id, fox_group, created_at, user_id, LatLng(c(0).toDouble, c(1).toDouble), publiced_at)
+      Hint(id, fox_group, created_at, user_id, LatLng(c(0).toDouble, c(1).toDouble), hour)
     }
-    case "hunt"~id~fox_group~created_at~user_id~point~found_at => {
-      def c = "1,4".split(",")
+    case "hunt"~id~fox_group~created_at~user_id~point~(found_at:Date) => {
+      val p1:String = point.stripPrefix("POINT(")
+      val p2:String = p1.stripSuffix(")")
+      def c = p2.split(" ")
       Hunt(id, fox_group, created_at, user_id, LatLng(c(0).toDouble, c(1).toDouble), found_at)
     }
   }
@@ -80,20 +82,17 @@ object Coordinate {
     """.stripMargin // nearest_way_id bigint,
 
   def all: Seq[Coordinate] = {
-    Coordinate.simple
     DB.withConnection { implicit connection =>
       SQL(
         """
-            select 'hint' as type,""" + sqlCoordinate + """, publiced_at
+            select 'hint' as type, """ + sqlCoordinate + """, hint_hour
             from hints
-            union
-            select 'hunt' as type,""" + sqlCoordinate + """, found_at
-            from hunts
+        """).as(Coordinate.simple *) ++
+      SQL(
+        """
+           select 'hunt' as type, """ + sqlCoordinate + """, found_at
+           from hunts
         """).as(Coordinate.simple *)
-
-//      union all, publiced_at
-//        select 'hunt',""" + sqlCoordinate + """, found_at
-//      from hunts
     }
   }
 
