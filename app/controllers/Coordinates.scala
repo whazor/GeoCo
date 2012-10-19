@@ -8,19 +8,20 @@ import models.{Hunt, Hint, Coordinate}
 
 object Coordinates extends Controller with Secured {
 
-  def list = IsAuthenticated { (user, request) =>
-    Ok(toJson(
-      Map(
-        "hints" -> Coordinate.all.filter(c => c match {
+  def list(sort: String, id: Long) = IsAuthenticated { (user, request) =>
+    sort match {
+      case "hints" =>
+        Ok(toJson(Coordinate.allFromId(id).filter(c => c match {
           case x:Hint => true
           case _ => false
-        }).map(h => h.toJson),
-        "hunts" -> Coordinate.all.filter(c => c match {
+        }).map(h => h.toJson)))
+      case "hunts" =>
+        Ok(toJson(Coordinate.allFromId(id).filter(c => c match {
           case x:Hunt => true
           case _ => false
-        }).map(h => h.toJson)
-      )
-    ))
+        }).map(h => h.toJson)))
+      case _ => Ok(toJson(Coordinate.allFromId(id).map(h => h.toJson)))
+    }
   }
   def read(id: Long) = IsAuthenticated { (user, request) =>
     Ok("Your new application is ready.")

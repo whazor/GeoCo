@@ -81,18 +81,24 @@ object Coordinate {
       user_id
     """.stripMargin // nearest_way_id bigint,
 
-  def all: Seq[Coordinate] = {
+  def allFromId(id: Long): Seq[Coordinate] = {
     DB.withConnection { implicit connection =>
       SQL(
         """
-            select 'hint' as type, """ + sqlCoordinate + """, hint_hour
-            from hints
-        """).as(Coordinate.simple *) ++
+            select 'hint' as type,
+        """ + sqlCoordinate +
+          """, hint_hour
+          from hints
+          where id > {id}
+          """).on("id" -> id).as(Coordinate.simple *) ++
       SQL(
         """
-           select 'hunt' as type, """ + sqlCoordinate + """, found_at
-           from hunts
-        """).as(Coordinate.simple *)
+         select 'hunt' as type,
+        """ + sqlCoordinate +
+          """, found_at
+          from hunts
+          where id > {id}
+          """).as(Coordinate.simple *)
     }
   }
 

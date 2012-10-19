@@ -3,16 +3,17 @@
 # ~~~~
 
 # Home page
-GET		/					controllers.Dashboard.index
-GET		/login				controllers.Application.login
-POST	/login				controllers.Application.authenticate
-GET		/route/:lat/:long	controllers.Routing.route(lat: String, long: String)
+GET		/						controllers.Dashboard.index
+GET		/login					controllers.Application.login
+POST	/login					controllers.Application.authenticate
+GET		/route/:lat/:long		controllers.Routing.route(lat: String, long: String)
 
-GET		/coordinates		controllers.Coordinates.list
-GET		/coordinates/:id	controllers.Coordinates.read(id: Long)
-PUT		/coordinates/:id	controllers.Coordinates.update(id: Long)
-POST	/coordinates		controllers.Coordinates.create
-DELETE	/coordinates/:id	controllers.Coordinates.delete(id: Long)
+GET		/coordinates/			controllers.Coordinates.list(sort: String="all", id:Long?=0)
+GET		/coordinates/:sort		controllers.Coordinates.list(sort: String, id:Long?=0)
+# GET		/coordinates/:id	controllers.Coordinates.read(id: Long)
+PUT		/coordinates/:id		controllers.Coordinates.update(id: Long)
+POST	/coordinates			controllers.Coordinates.create
+DELETE	/coordinates/:id		controllers.Coordinates.delete(id: Long)
 
 # Map static resources from the /public folder to the /assets URL path
-GET		/assets/*file		controllers.Assets.at(path="/public", file)
+GET		/assets/*file			controllers.Assets.at(path="/public", file)
