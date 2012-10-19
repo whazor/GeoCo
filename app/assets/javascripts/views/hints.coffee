@@ -42,8 +42,8 @@ class Hint extends Backbone.View
           data =
             fox_group: @name
             hour: @hour
-            lat: $("lat", form).val()
-            lng: $("lng", form).val()
+            lat: $(".input-lat", form).val()
+            lng: $(".input-lng", form).val()
           if(@model)
             @model.set data
             @model.save
