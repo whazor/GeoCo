@@ -106,10 +106,10 @@ object Coordinate {
     DB.withConnection { implicit connection =>
       sort match {
         case "hints" => SQL("""
-          select 'hint',""" + sqlCoordinate + """, hint_hour
+          select 'hint' as type,""" + sqlCoordinate + """, hint_hour
           from hints where coordinate_id = {id} limit 1""").on("id" -> id).as(Coordinate.simple.singleOpt)
         case "hunts" => SQL("""
-          select 'hunt',""" + sqlCoordinate + """, found_at
+          select 'hunt' as type,""" + sqlCoordinate + """, found_at
           from hints where coordinate_id = {id} limit 1""").on("id" -> id).as(Coordinate.simple.singleOpt)
       }
     }
