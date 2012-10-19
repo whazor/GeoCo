@@ -1,4 +1,5 @@
 @views ||= {}
+current = false
 class @views.Hints extends Backbone.View
   el: '#hints table tbody'
   initialize: (options) ->
@@ -19,41 +20,43 @@ class @views.Hints extends Backbone.View
         @hints[i][j] = new Hint k
         tr.append @hints[i][j].render().el
       @$el.append tr
+    @$el.on 'click', '.btn-fillin', (e) ->
+      form = new Form($(@)).render().el
+      $(@).popover
+        title: 'Hint invoeren'
+        placement: $(@).attr 'data-align'
+        content: form
+      return if $(@) == current
+      current.popover 'hide' if current
+      current = $(@)
+      $(@).popover 'show'
+      $(@).data('popover').$tip.find('form input')[0].focus()
+      $(window).unbind 'resize.popover'
+      $(window).bind 'resize.popover', -> current.popover 'show'
+      $(form).bind 'close', (e) -> current.popover 'hide'
     @
 
-current = false
 class Hint extends Backbone.View
   tagName: 'td'
   initialize: (i) -> @i = i #model.bind on change do render
   bind: (model) => model.bind 'change', @render
   render: =>
-    current.popover 'hide' if current
-    btn = $ '<button class="btn">Invullen</button>'
-    btn.attr 'data-original-title', 'Hint invullen'
-
-    btn.popover placement: if @i <= 3 then 'right' else 'left'
-    btn.bind 'click', (e) ->
-      return if btn == current
-      current.popover 'hide' if current
-      current = btn
-      btn.popover 'show'
-      btn.attr 'data-content', $(new Form().render().el).html()
-      $(window).unbind 'resize.popover'
-      $(window).bind 'resize.popover', -> current.popover 'show'
-      $('.btn.btn-close').unbind('click').bind 'click', ->
-        current.popover 'hide'
-        false
+    btn = $ '<button class="btn btn-fillin">Invullen</button>'
+    btn.attr 'data-align', if @i <= 3 then 'right' else 'left'
     @$el.append btn
     @
 
-class Form extends Backbone.view
+class Form extends Backbone.View
+#  initialize: (btn) -> @btn = btn
   tagName: 'form'
   render: =>
-    @$el.html """
-      <label>Coördinaat:</label>
-      <input type="text" class="input-mini" style="width: 40%; float: left;">
-      <input type="text" class="input-mini" style="width: 40%; float: right;">
-      <button type="submit" class="btn btn-primary btn-small">Aanmaken</button>
-      <button class="btn btn-small btn-close">Sluiten</button>
-    """
+    @$el.append $ """
+      <div>
+        <label>Coördinaat:</label>
+        <input type="text" class="input-mini" style="width: 40%; float: left;">
+        <input type="text" class="input-mini" style="width: 40%; float: right;">
+        <button type="submit" class="btn btn-primary btn-small">Aanmaken</button>
+        <button onclick="$(this).parent().parent().trigger('close'); return false;" class="btn btn-small btn-close">Sluiten</button>
+      </div>
+      """
     @
