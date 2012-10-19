@@ -23,7 +23,8 @@ abstract class Coordinate() {
     "created_at" -> Json.toJson(created_at.getTime()),
     "time" -> Json.toJson(time.getTime()),
     "user_id" -> Json.toJson(user_id.get),
-    "point" -> Json.toJson(point.array)
+    "lat" -> Json.toJson(point.lat),
+    "lng" -> Json.toJson(point.long)
   )
 }
 case class Hint(
