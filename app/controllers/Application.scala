@@ -20,7 +20,7 @@ object Application extends Controller {
     tuple(
       "name" -> text,
       "password" -> text) verifying ("Invalid username or password", result => result match {
-        case (name, password) => password.equals("vioolkast") && User.authenticate(name).isDefined 
+        case (name, password) => User.authenticate(name, password)
       }))
 
   def login = Action { implicit request =>

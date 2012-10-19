@@ -8,60 +8,59 @@ class @views.Hints extends Backbone.View
     @collection.bind 'add', @add, @
     @collection.bind 'reset', (-> _.each @collection.models, @add), @
 
+
+
   add: (h) =>
     @hints[parseInt h.get 'hour'][h.get 'fox_group'].bind h
   render: =>
     @$el.empty()
-    for i in [9..15]
-      @hints[i] ||= []
-      tr = $ '<tr>'
-      tr.append "<th>#{i}:00</th>"
-      for j, k in ["alpha", "bravo", "charlie", "delta", "echo", "foxtrot"]
-        @hints[i][j] = new Hint k
-        tr.append @hints[i][j].render().el
+    for time in [9..15]
+      @hints[time] ||= []
+      tr = $ "<tr><th>#{time}:00</th></tr>"
+      for name, index in ["alpha", "bravo", "charlie", "delta", "echo", "foxtrot"]
+        hint = @hints[time][name] = new Hint index, name, time
+        tr.append hint.el
+        hint.render()
       @$el.append tr
-
-    @$el.on 'click', '.btn-fillin', (e) ->
-      return if $(@) == current
-      form = new Form($(@)).render().el
-      $(@).popover
-        title: 'Hint invoeren'
-        placement: $(@).attr 'data-align'
-        content: form
-      if current
-        current.popover 'hide'
-        current = false
-      current = $(@)
-      $(@).popover 'show'
-      $(@).data('popover').$tip.find('form input')[0].focus()
-      $(window).unbind 'resize.popover'
-      $(window).bind 'resize.popover', -> current.popover 'show'
-      $(form).bind 'close', (e) ->
-        current.popover 'hide'
-        current = false
     @
 
 class Hint extends Backbone.View
   tagName: 'td'
-  initialize: (i) -> @i = i #model.bind on change do render
-  bind: (model) => model.bind 'change', @render
-  render: =>
-    btn = $ '<button class="btn btn-fillin">Invullen</button>'
-    btn.attr 'data-align', if @i <= 3 then 'right' else 'left'
-    @$el.append btn
-    @
+  className: "Hint"
+  initialize: (index, @name, @time) ->
+    @$el.data("content", form = $ """
+          <div>
+            <label>Coördinaat:</label>
+            <input type="text" class="input-mini input-lat" style="width: 40%; float: left;">
+            <input type="text" class="input-mini input-lng" style="width: 40%; float: right;">
+            <button type="submit" class="btn btn-primary btn-small">Aanmaken</button>
+            <button class="btn btn-small pull-right btn-close" data-dismiss="clickover">Sluiten</button>
+          </div>
+          """);
+    @$el.clickover
+      title: 'Hint invoeren'
+      placement: if index < 3 then 'right' else 'left'
+      trigger:  "manual"
+      onShown: ->
+        $("button[type=submit]", form).on "click.clickover", =>
+          $.ajax "/coordinates",
+            type: "POST"
+            data:
+              fox_group: @name
+              time: @time
+              lat: $("lat", form).val()
+              lng: $("lng", form).val()
+            dataType: "json"
+            complete: (data, status) =>
+              switch status
+                when 200 then # Success
 
-class Form extends Backbone.View
-#  initialize: (btn) -> @btn = btn
-  tagName: 'form'
-  render: =>
-    @$el.append $ """
-      <div>
-        <label>Coördinaat:</label>
-        <input type="text" class="input-mini" style="width: 40%; float: left;">
-        <input type="text" class="input-mini" style="width: 40%; float: right;">
-        <button type="submit" class="btn btn-primary btn-small">Aanmaken</button>
-        <button onclick="$(this).parent().parent().trigger('close'); return false;" class="btn btn-small btn-close">Sluiten</button>
-      </div>
-      """
-    @
+                when 409 then # Already exists
+
+
+      onHidden: ->
+        $("button[type=submit]", form).off "click.clickover"
+    @$el.append $('<button class="btn btn-fillin">Invullen</button>')
+
+  bind: (@model) => @model.bind 'change', @render
+  render: -> @

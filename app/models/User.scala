@@ -17,7 +17,17 @@ object User {
     }
   }
 
-  def authenticate(name: String): Option[User] = {
+  def authenticate(name:String, password:String) : Boolean = {
+    if (!password.equals("vioolkast"))
+      return false
+    getByNormalized(name) match {
+      case Some(user) => user
+      case None => create(name)
+    }
+    true
+  }
+
+  def getByNormalized(name: String): Option[User] = {
     DB.withConnection { implicit connection =>
       SQL(
         """
@@ -35,12 +45,12 @@ object User {
     }
   }
 
-  def create(user: User): User = {
-    DB.withConnection { implicit connection =>
+  def create(username: String): User = {
+    val id = DB.withConnection { implicit connection =>
       SQL("""
           INSERT INTO users(name) VALUES ({name})
-          """).on("name" -> user.name).executeUpdate()
+          """).on("name" -> username).executeUpdate()
     }
-    user
+    getById(id).get
   }
 }
