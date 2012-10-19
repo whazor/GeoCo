@@ -18,6 +18,8 @@ class Hunt extends Coordinate
 class window.HuntCollection extends Backbone.Collection
   model: Hunt
   url: '/coordinates/hunts'
+  comperator: (coord) -> coord.time ? 0
 class window.HintCollection extends Backbone.Collection
   model: Hint
   url: '/coordinates/hints'
+  comperator: (coord) -> coord.time ? 0

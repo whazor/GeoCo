@@ -5,5 +5,5 @@ class @views.Dashboard extends Backbone.View
         "click .brand": "reset"
     reset: -> false
     initialize: (coordinates) ->
-        @maps = new views.Maps
+        @maps = new views.Maps window.hints, window.hunts
         @hints = new views.Hints window.hints
