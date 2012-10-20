@@ -1,6 +1,10 @@
 package controllers
 
 import play.api._
+import play.api.db._
+import anorm._
+import anorm.SqlParser._
+import play.api.Play.current
 import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
@@ -49,6 +53,28 @@ object Coordinates extends Controller with Secured {
           )
         )
       case _ => BadRequest("Sort unknown")
+    }
+  }
+
+  def geo(x:Int, y:Int) = IsAuthenticated { (user, request) =>
+    DB.withConnection { implicit connection =>
+      val point:String =
+        SQL(
+          """
+              select ST_AsText(ST_Transform(ST_SetSRID(ST_Point({x}, {y}), 28992), 4326)) as coordinate;
+          """.stripMargin).on('x -> x, 'y -> y)().head[String]("coordinate")
+
+      val p1:String = point.stripPrefix("POINT(")
+      val p2:String = p1.stripSuffix(")")
+      def c = p2.split(" ")
+      def latlng = LatLng(c(0).toDouble, c(1).toDouble)
+
+      Ok(toJson(
+        Map(
+          "lat" -> latlng.lat,
+          "lng" -> latlng.long
+        )
+      ))
     }
   }
 

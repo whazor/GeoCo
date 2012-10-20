@@ -15,5 +15,7 @@ PUT		/coordinates/:sort/:id	controllers.Coordinates.update(sort: String, id:Long
 POST	/coordinates/:sort		controllers.Coordinates.create(sort: String)
 DELETE	/coordinates/:sort/:id	controllers.Coordinates.delete(sort: String, id:Long)
 
+GET		/geo					controllers.Coordinates.geo(x:Int?=0, y:Int?=0)
+
 # Map static resources from the /public folder to the /assets URL path
 GET		/assets/*file			controllers.Assets.at(path="/public", file)

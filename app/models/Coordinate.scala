@@ -140,9 +140,21 @@ object Coordinate {
     val r1 = r(0)
     val r2 = r(1)
 
-    val srid = if (r1.toDouble < 100 && r2.toDouble < 100) { 4326 } else { 28992 }
-    val x = if(srid == 4326) { r2.toDouble } else { math.pow(10, math.max(0, 6-(""+r1).length)) * r1.toDouble }
-    val y = if(srid == 4326) { r1.toDouble } else { math.pow(10, math.max(0, 6-(""+r2).length)) * r2.toDouble }
+    val srid = if (r1.toDouble < 100 && r2.toDouble < 100) {
+      4326
+    } else {
+      28992
+    }
+    val x = if (srid == 4326) {
+      r2.toDouble
+    } else {
+      math.pow(10, math.max(0, 6 - ("" + r1).length)) * r1.toDouble
+    }
+    val y = if (srid == 4326) {
+      r1.toDouble
+    } else {
+      math.pow(10, math.max(0, 6 - ("" + r2).length)) * r2.toDouble
+    }
     (x, y, srid)
   }
 
@@ -178,7 +190,7 @@ object Coordinate {
           fox_group = {fox_group},
           user_id = {user_id},
           raw = {raw},
-          point =  ST_Transform(ST_SetSRID(ST_Point({x}, {y}), {srid}), 4326),
+          point = ST_Transform(ST_SetSRID(ST_Point({x}, {y}), {srid}), 4326),
           hint_hour = {hour}
         WHERE coordinate_id = {id};
         """).on(
