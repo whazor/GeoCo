@@ -34,6 +34,7 @@ class Hint extends Backbone.View
                       <button type="submit" class="btn btn-primary btn-small create-btn">Aanmaken</button>
                       <button class="btn btn-danger btn-small delete-btn">Verwijderen</button>
                       <button class="btn btn-small btn-close" data-dismiss="clickover">Sluiten</button>
+                      <button class="btn btn-small btn-Zoom">Zoom</button>
                     </div>
                   </div>
                   """);
@@ -65,10 +66,14 @@ class Hint extends Backbone.View
           model = @model
           @model = null
           model.destroy()
+        $("button.zoom-btn", @form).on "click.clickover", =>
+          @options.map.setCenter new google.maps.LatLng(@model.get("lat"), @model.get("lng"))
+          @options.map.setZoom(13)
 
       onHidden: ->
         $("button.create-btn", @form).off "click.clickover"
         $("button.delete-btn", @form).off "click.clickover"
+        $("button.zoom-btn", @form).off "click.clickover"
     @$el.append $('<button class="btn btn-fillin">Invullen</button>')
     @render()
 
