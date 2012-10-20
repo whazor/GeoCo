@@ -64,7 +64,9 @@ td:not(:first-child), th:not(:first-child) {
 td:first-child, th:first-child {
     width: 60px;
 }
-
+.clickover, .clickover .inner {
+    width: 300px !important;
+}
 
 /* @blue:                  #049cdb;
 @blueDark:              #0064cd;
