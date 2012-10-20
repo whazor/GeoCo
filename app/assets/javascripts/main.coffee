@@ -2,13 +2,11 @@ $ =>
   window.hints = new window.HintCollection
   window.hunts = new window.HuntCollection
 
+  dashboard = new views.Dashboard
+
   @utilities.AutoUpdate window.hints
   @utilities.AutoUpdate window.hunts
-
-  dashboard = new views.Dashboard
   @Clock.start 1000
-
-
 
 window.fox_groups = ["alpha", "bravo", "charlie", "delta", "echo", "foxtrot"]
 window.fox_colors =
