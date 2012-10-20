@@ -3,6 +3,7 @@ m = google.maps
 window.geocoder = new m.Geocoder()
 class @views.Maps extends Backbone.View
   deelgebieden = {}
+  groupMarkers = []
   window.data = {}
   el: '#maps'
   initialize: (@hints, @hunts) ->
@@ -39,6 +40,24 @@ class @views.Maps extends Backbone.View
           fillOpacity: 0.05
         p.setMap(map)
       deelgebieden[name] = poly: p, points: data.points
+    $.get "/assets/kml/groepen.kml", (raw) ->
+      kml = $ raw
+      $("Placemark", kml).each ->
+        mark = $(this)
+        name = $("name", mark).text()
+        [lng, lat] = (parseFloat x for x in $("Point coordinates", mark).text().split(/,/))
+        pos = new google.maps.LatLng lat, lng
+        groupMarkers.push new m.Marker
+          position: pos
+          map: map
+          icon:
+            path: google.maps.SymbolPath.CIRCLE
+            fillColor: "#11BB11"
+            fillOpacity: 1
+            strokeWeight: 1
+            scale: 3
+          title: "#{name}: #{lat}, #{lng}"
+
 
     for group in window.fox_groups
       gData = data[group] =
