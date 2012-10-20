@@ -6,6 +6,10 @@ class @views.Maps extends Backbone.View
   window.data = {}
   el: '#maps'
   initialize: (@hints, @hunts) ->
+    window.Clock.listeners.push ->
+      for name, gData of data
+        gData.poly.setPath gData.collection.map (model) -> new m.LatLng model.get("lat"), model.get "lng"
+
     @$el = $(@el)
     window.map = new m.Map @el,
         zoom: 13,
@@ -20,7 +24,7 @@ class @views.Maps extends Backbone.View
           return
         lastValidCenter = map.getCenter()
 
-    $.getJSON "/assets/javascripts/deelgebied.json", (json) ->
+    $.getJSON "/assets/javascripts/deelgebied.json", (json) =>
       for name, data of json
         p = new m.Polygon
           paths: new m.LatLng(lat, lng) for {lat, lng} in data.points,
@@ -38,17 +42,21 @@ class @views.Maps extends Backbone.View
         name: group
         poly: new m.Polyline
           path: []
-          strokeColor: "#FF0000"
+          strokeColor: window.fox_colors[group]
           strokeOpacity: 1.0
           strokeWeight: 2
-      gData.poly.setMap map
+          map: map
       gData.collection.comperator = (coord) -> coord.time ? 0
       gData.collection.on "change", ->
-        gData.poly.setPath = gData.collection.map (model) -> new m.LatLng model.get "lat", model.get "lng"
+        gData.poly.setPath gData.collection.map (model) -> new m.LatLng model.get("lat"), model.get "lng"
       gData.collection.on "add", ->
-        gData.poly.setPath = gData.collection.map (model) -> new m.LatLng model.get "lat", model.get "lng"
+        gData.poly.setPath gData.collection.map (model) -> new m.LatLng model.get("lat"), model.get "lng"
+      gData.collection.on "remove", ->
+        gData.poly.setPath gData.collection.map (model) -> new m.LatLng model.get("lat"), model.get "lng"
       gData.collection.on "reset", ->
-        gData.poly.setPath = gData.collection.map (model) -> new m.LatLng model.get "lat", model.get "lng"
+        gData.poly.setPath gData.collection.map (model) -> new m.LatLng model.get("lat"), model.get "lng"
+      gData.collection.reset @hints.where fox_group: group
+      gData.collection.add @hunts.where fox_group: group
 
     @hints.on "add", (hint) ->
       data[hint.get "fox_group"].collection.add hint
@@ -59,10 +67,10 @@ class @views.Maps extends Backbone.View
     @hunts.on "remove", (hunt) ->
       data[hunt.get "fox_group"].collection.remove(hunt)
     @hints.on "reset", ->
-      for gData, name of data
-        gData.collection.reset @hint.where fox_group: name
-        gData.collection.add @hunt.where fox_group: name
+      for name, gData of data
+        gData.collection.reset @hints.where fox_group: name
+        gData.collection.add @hunts.where fox_group: name
     @hunts.on "reset", ->
-      for gData, name of data
-        gData.collection.reset @hint.where fox_group: name
-        gData.collection.add @hunt.where fox_group: name
+      for name, gData of data
+        gData.collection.reset @hints.where fox_group: name
+        gData.collection.add @hunts.where fox_group: name
