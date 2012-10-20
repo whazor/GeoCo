@@ -39,7 +39,8 @@ class @views.Maps extends Backbone.View
         strokeWeight: 2
       @paths[group].setMap @map
 
-    @hints.on "add", (model) =>
+
+    addModel = (model) =>
       group = model.get 'fox_group'
       time = Math.floor(model.get('time')/100000)
       insert = false
@@ -51,16 +52,22 @@ class @views.Maps extends Backbone.View
       @collection[group].push(model) if not insert
       clearInterval @timeout
       @timeout = setTimeout (=> @render()), 400
-    @hints.on "change", (model) =>
+    @hints.on "add", addModel
+    @hunts.on "add", addModel
+    changeModel = (model) =>
       clearInterval @timeout
       @timeout = setTimeout (=> @render()), 400
       @drawModel model
-    @hints.on "remove", (model) =>
+    @hints.on "change", changeModel
+    @hunts.on "change", changeModel
+    removeModel = (model) =>
       clearInterval @timeout
       group = model.get 'fox_group'
       for m, i in @collection[group] when m == model
         @collection[group].splice(i, 1)
       @timeout = setTimeout (=> @render()), 400
+    @hints.on "remove", removeModel
+    @hunts.on "remove", removeModel
 
   drawModel: (model) =>
     group = model.get 'fox_group'

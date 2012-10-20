@@ -52,6 +52,13 @@ object Coordinates extends Controller with Secured {
       "raw" -> text
     )
   )
+  val huntForm = Form(
+    tuple(
+      "fox_group" -> text,
+      "found_at" -> play.api.data.Forms.date,
+      "raw" -> text
+    )
+  )
   def create(sort: String) = IsAuthenticated { (user, request) =>
     val body = request.body.asJson.get
     sort match {
@@ -69,6 +76,20 @@ object Coordinates extends Controller with Secured {
             Ok(c)
           }
         )
+      case "hunts" =>
+        huntForm.bind(body).fold(
+          formWithErrors => BadRequest(formWithErrors.errorsAsJson),
+          value => {
+            val c = Coordinate.createHunt(
+              value._1,
+              user,
+              value._3,
+              value._2
+            ).get.toJson
+            resetList()
+            Ok(c)
+          }
+        )
       case _ => BadRequest("Sort unknown")
     }
   }
@@ -81,6 +102,21 @@ object Coordinates extends Controller with Secured {
           formWithErrors => BadRequest(formWithErrors.errorsAsJson),
           value => {
             val c = Coordinate.updateHint(
+              id,
+              value._1,
+              user,
+              value._3,
+              value._2
+            ).get.toJson
+            resetList()
+            Ok(c)
+          }
+        )
+      case "hunts" =>
+        huntForm.bind(body).fold(
+          formWithErrors => BadRequest(formWithErrors.errorsAsJson),
+          value => {
+            val c = Coordinate.updateHunt(
               id,
               value._1,
               user,
