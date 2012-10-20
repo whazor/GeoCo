@@ -39,4 +39,4 @@ class @views.Dashboard extends Backbone.View
 
       @maps = new views.Maps window.hints, window.hunts
       @hints = new views.Hints window.hints, @maps
-      $("tbody").animate({scrollTop: $("#hour-#{Math.floor(window.MapTime(Date.now()).ToHour())}").offset().top - $("#hour-0").offset().top - 20 }, "slow")
+      $("tbody").animate({scrollTop: $("#hour-#{Math.floor(window.MapTime(Date.now()).ToHour())}").offset().top - $("#hour-15").offset().top - 20 }, "slow")

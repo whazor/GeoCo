@@ -209,6 +209,31 @@ object Coordinate {
       }
     }
   }
+
+  def createHunt(fox_group: String, user: User, raw: String, found_at: Date): Option[Coordinate] = {
+    DB.withConnection { implicit connection =>
+      val (x, y, srid) = rawToGeo(raw)
+      val insertId = SQL(
+        """
+        INSERT INTO hunts(fox_group, created_at, user_id, raw, point, found_at)
+        VALUES ({fox_group}, NOW(), {user_id}, {raw}, ST_Transform(ST_SetSRID(ST_Point({x}, {y}), {srid}), 4326), {found_at})
+        """).on(
+        'fox_group -> fox_group,
+        'user_id -> user.id,
+        'raw -> raw,
+        'x -> x,
+        'y -> y,
+        'found_at -> found_at,
+        'srid -> srid
+      ).executeInsert()
+      insertId match {
+        case Some(id) => getById(id, "hunts")
+        case None => None
+      }
+    }
+  }
+
+
   def updateHint(id: Long, fox_group: String, user: User, raw: String, hour: Int): Option[Coordinate] = {
     DB.withConnection { implicit connection =>
       val (x, y, srid) = rawToGeo(raw)
@@ -235,6 +260,34 @@ object Coordinate {
       getById(id, "hints")
     }
   }
+
+  def updateHunt(id: Long, fox_group: String, user: User, raw: String, found_at: Date): Option[Coordinate] = {
+    DB.withConnection { implicit connection =>
+      val (x, y, srid) = rawToGeo(raw)
+      val updateId = SQL(
+        """
+        UPDATE hints
+        SET
+          fox_group = {fox_group},
+          user_id = {user_id},
+          raw = {raw},
+          point = ST_Transform(ST_SetSRID(ST_Point({x}, {y}), {srid}), 4326),
+          found_at = {found_at}
+        WHERE coordinate_id = {id};
+        """).on(
+        'fox_group -> fox_group,
+        'user_id -> user.id,
+        'raw -> raw,
+        'x -> x,
+        'y -> y,
+        'found_at -> found_at,
+        'srid -> srid,
+        'id -> id
+      ).executeUpdate()
+      getById(id, "hints")
+    }
+  }
+
   def delete(id: Long): Boolean = {
     DB.withConnection { implicit connection =>
       SQL(
