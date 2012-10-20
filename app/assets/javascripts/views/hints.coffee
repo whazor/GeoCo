@@ -18,6 +18,7 @@ class @views.Hints extends Backbone.View
     @
 
   set: (h) =>
+    return unless @hints[parseInt h.get 'hour']?
     @hints[parseInt h.get 'hour'][h.get 'fox_group'].bind h, @collection
 
 class Hint extends Backbone.View
