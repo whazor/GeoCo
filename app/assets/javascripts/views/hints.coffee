@@ -11,7 +11,7 @@ class @views.Hints extends Backbone.View
       @hints[hour] ||= []
       tr = $ "<tr id=hour-#{hour}><th>#{window.MapHour(hour).ToString()}</th></tr>"
       for name, index in window.fox_groups
-        hint = @hints[hour][name] = new Hint index, name, hour, @collection
+        hint = @hints[hour][name] = new Hint index, name, hour, @collection, @maps
         tr.append hint.el
         hint.render()
       @$el.append tr
@@ -23,7 +23,7 @@ class @views.Hints extends Backbone.View
 class Hint extends Backbone.View
   tagName: 'td'
   className: "Hint"
-  initialize: (index, @name, @hour, @collection) ->
+  initialize: (index, @name, @hour, @collection, @maps) ->
     @$el.attr("id", "#{@hour} - #{@name}")
     @$el.data("content", @form = $ """
                   <div>
@@ -34,7 +34,7 @@ class Hint extends Backbone.View
                       <button type="submit" class="btn btn-primary btn-small create-btn">Aanmaken</button>
                       <button class="btn btn-danger btn-small delete-btn">Verwijderen</button>
                       <button class="btn btn-small btn-close" data-dismiss="clickover">Sluiten</button>
-                      <button class="btn btn-small btn-Zoom">Zoom</button>
+                      <button class="btn btn-small zoom-btn">Zoom</button>
                     </div>
                   </div>
                   """);
@@ -67,8 +67,7 @@ class Hint extends Backbone.View
           @model = null
           model.destroy()
         $("button.zoom-btn", @form).on "click.clickover", =>
-          @options.map.setCenter new google.maps.LatLng(@model.get("lat"), @model.get("lng"))
-          @options.map.setZoom(13)
+          @maps.zoom new google.maps.LatLng(@model.get("lat"), @model.get("lng")), 13
 
       onHidden: ->
         $("button.create-btn", @form).off "click.clickover"
