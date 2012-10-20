@@ -1,0 +1,500 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://earth.google.com/kml/2.1">
+	<Document>
+		<Style id="SGStyle">
+			<IconStyle id="SGIcon">
+				<Icon>
+					<href>http://maps.gstatic.com/mapfiles/ms2/micons/yellow-dot.png</href>
+				</Icon>
+			</IconStyle>
+		</Style>
+		<Placemark>
+			<name>Witte Wievengroep &amp; IJsselgroep</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>6.214911031691031,52.199596408062405</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>De Rietkampers - Don Bosco</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>5.616209793058829,51.88140705401497</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Jagermeester Johan Bentinck</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>5.922775554624991,52.196410299866955</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Olivier van Noort</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>5.989836144415335,52.18963947266842</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Aerendheem</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>5.947966861692862,52.00411890768727</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Andre de Thaye</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>5.933676052061514,51.98144575722189</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>De Geuzen Arnhem</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>5.876308965650992,51.98772298242761</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Schutgraaf Arnhem</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>5.869670951455987,51.966199791915805</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Scoutinggroep Lido '76</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>5.91754524704595,51.968277245579664</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Sint Christoforus - Lichtdraagsters</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>5.931637573210196,51.996126479066284</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Scouting Velika </name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>5.888893890348868,51.992202400971614</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Scouting Bemmel</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>5.905709999767737,51.887781890407815</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Scouting Bennekom</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>5.685625362364249,52.00983823255561</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Isselhunters</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>6.4685568093933625,51.87615816579596</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Triton Scouting</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>5.217499422995047,51.96078706419184</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>deWoutergroep Deest en St. Andries Weurt</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>5.660047817198233,51.889181567865336</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>St. Willibrordgroep Didam</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>6.132395553556876,51.93851240256494</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Scouting Dieren</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>6.100128579107718,52.043787445902424</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Isala groep scouting Doesburg</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>6.129761624304251,52.00160739121234</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Graaf Ottogroep Doetinchem</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>6.271256196466879,51.954513089628854</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Roothaangroep Doetinchem</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>6.320928025213675,51.949494269723665</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Scouting Hamaland</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>6.267246293989615,51.97648612726315</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>OPV-Schoonoord</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>5.800144958464102,51.97560384375769</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Scouting Duiven</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>6.032322335211234,51.94396729747263</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Langenberggroep</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>5.690871763197379,52.040413647342774</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Scouting Jan Hilgers</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>5.619825410810904,52.04174669940596</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>St. Werenfridus Scouting Elst</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>5.843451905218558,51.90663621231911</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Alexandergroep Ermelo</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>5.595052528349356,52.28630289706088</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Scouting Irmin-Taweb Ermelo</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>5.620158004728751,52.31539369430061</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Scoga</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>6.347374606100516,51.93790387361998</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Scouting Graaf van Gelre</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>5.270684051481567,51.878740187598716</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Scouting Groessen</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>6.032365250555472,51.93191405319202</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Scouting Ragay Redoz</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>5.63566117283483,52.32654206699026</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Scouting Verbraak Margriet Groep</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>5.636669682114757,52.32467290685644</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>De Spoorzoekers</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>5.74876456257482,51.89876872443144</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Mgr. de la Geneste Grave</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>5.829381036726431,51.76527532395186</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Scouting Huissen/Angeren</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>5.941674399343924,51.935416756473266</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Sweder van Voorst</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>6.224813747374014,52.021518970055276</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Scouting Valeouwe</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>6.028073716131644,52.12216760455725</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Scouting Lunteren</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>5.650542068449454,52.09115044732825</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Kiliaen van Rensselaer I, Nijkerk</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>5.468296694723563,52.220312046976275</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Scouting Amalgama</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>5.785575199095206,51.83904082072514</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Scouting Karel de Stoute</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>5.818233776060538,51.801650690568614</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Scouting Paul Kruger</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>5.80297736070645,51.8464927365626</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Scouting Z.V. de Batavieren</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>5.849358129469351,51.80801278406953</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Scoutinggroep de Bevers</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>5.7897165298142,51.809027716979315</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Bram IJzerman, John F. Kennedy</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>5.808019924131827,52.376046224979625</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Kon-Tiki</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>5.639727401701407,52.24455567451784</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Rhedense Pioniers</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>6.026764798132376,51.998562339379546</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Scouting Jonko</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>6.381039011446433,51.91030304337193</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Scouting Phoenix Tiel</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>5.426491785017447,51.8997749924043</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Scouting Valburg</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>5.78947513100286,51.912622788183036</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>de Zwervers</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>5.53603320118566,52.01525308587534</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Velpsche Woudloopers en de Olmen</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>5.979116249052595,52.008068357922035</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Helene H. Wilkensgroep</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>6.138795304266409,52.18238739467026</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Van Nispengroep Wehl</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>6.2070092439331574,51.964512686233405</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Scouting Beuningen `76</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>5.782131242720084,51.85361906799162</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Scouting Woezik</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>5.7173934459366364,51.82521711797975</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Karmijngroep Winssen</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>5.700372147528128,51.881430233865785</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Scouting Zetten</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>5.709389734236197,51.932555739783865</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Scouting Subanhara-Liemersgroep en Scouting Sint Oswaldus.</name>
+			<description/>
+			<styleUrl>#SGStyle</styleUrl>
+			<Point>
+				<coordinates>6.066167056560516,51.91570511674383</coordinates>
+			</Point>
+		</Placemark>
+	</Document>
+</kml>
