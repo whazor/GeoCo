@@ -53,8 +53,10 @@ class @views.Maps extends Backbone.View
             map: map
             icon:
               path: google.maps.SymbolPath.CIRCLE
+              strokeColor: "#11BB11"
+              strokeOpacity: 0
               fillColor: "#11BB11"
-              fillOpacity: 1
+              fillOpacity: 0.8
               strokeWeight: 1
               scale: 3
             title: "#{name}: #{lat}, #{lng}"
@@ -66,6 +68,7 @@ class @views.Maps extends Backbone.View
             strokeOpacity: 0.8
             fillColor: "#11BB11"
             fillOpacity: 0.1
+            strokeWeight: 1
 
 
     for group in window.fox_groups
