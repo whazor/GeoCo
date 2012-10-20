@@ -20,7 +20,7 @@ window.fox_colors =
   foxtrot: "#FFFF00"
 window.MapHour = (i) ->
   ToDate: ->
-    base = new Date(2012, 10, 20, 9, 0, 0)
+    base = new Date(2012, 9, 20, 9, 0, 0)
     base.setHours base.getHours() + i
     base
   ToString: ->
@@ -28,8 +28,8 @@ window.MapHour = (i) ->
     "#{date.getHours()}:00"
 window.MapTime = (time) ->
   ToHour: ->
-    base = new Date(2012, 10, 20, 9, 0, 0)
-    (time - base) / 1000 / 60 / 60
+    base = new Date(2012, 9, 20, 9, 0, 0)
+    (time - base.getTime()) / 1000 / 60 / 60
 
 class @Clock
   @listeners = []
