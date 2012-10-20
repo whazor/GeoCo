@@ -7,14 +7,10 @@ class @views.Maps extends Backbone.View
   initialize: (@hints, @hunts) ->
     @deelgebieden = {}
     @groupMarkers = []
-
-    window.Clock.listeners.push ->
-      for name, gData of data
-        gData.poly.setPath gData.collection.map (model) -> new m.LatLng model.get("lat"), model.get "lng"
-        if gData.collection.length != 0
-          model = gData.collection.at(gData.collection.length - 1)
-          gData.marker.setPosition(new m.LatLng model.get("lat"), model.get "lng")
-      return
+    @markers = []
+    @collection = {}
+    @timeout = null
+    @paths = {}
 
     @$el = $(@el)
     @map = new m.Map @el,
@@ -22,55 +18,65 @@ class @views.Maps extends Backbone.View
         mapTypeId: m.MapTypeId.ROADMAP
         scaleControl: true
     allowedBounds = new m.LatLngBounds new m.LatLng(51.7337, 4.9937), new m.LatLng(52.5219, 6.8330)
-    @map.fitBounds(allowedBounds)
+    @map.fitBounds allowedBounds
     lastValidCenter = @map.getCenter()
 
     m.event.addListener @map, 'center_changed', =>
-      if not allowedBounds.contains(@map.getCenter())
-        @map.panTo(lastValidCenter)
+      if not allowedBounds.contains @map.getCenter()
+        @map.panTo lastValidCenter
         return
       lastValidCenter = @map.getCenter()
 
     @getDeelgebieden()
     @getGroepen()
 
-    for group in window.fox_groups
-      gData = data[group] =
-        collection: new Backbone.Collection
-        name: group
-        poly: new m.Polyline
-          path: []
-          strokeColor: window.fox_colors[group]
-          strokeOpacity: 1.0
-          strokeWeight: 2
-          map: @map
-        marker: new m.Marker
-          map: @map
-          icon: "/assets/img/marker_#{group.charAt(0).toUpperCase()}.png"
-      gData.collection.comperator = (coord) -> coord.time ? 0
-      gData.collection.on "change", ->
-        gData.poly.setPath gData.collection.map (model) -> new m.LatLng model.get("lat"), model.get "lng"
-      gData.collection.on "add", ->
-        gData.poly.setPath gData.collection.map (model) -> new m.LatLng model.get("lat"), model.get "lng"
-      gData.collection.on "remove", ->
-        gData.poly.setPath gData.collection.map (model) -> new m.LatLng model.get("lat"), model.get "lng"
-      gData.collection.on "reset", ->
-        gData.poly.setPath gData.collection.map (model) -> new m.LatLng model.get("lat"), model.get "lng"
-      gData.collection.reset @hints.where fox_group: group
-      gData.collection.add @hunts.where fox_group: group
+    for group in fox_groups
+      @collection[group] = []
+      @paths[group] = new m.Polyline
+        path: []
+        strokeColor: window.fox_colors[group]
+        strokeOpacity: 1.0
+        strokeWeight: 2
+      @paths[group].setMap @map
 
-    @hints.on "add", (hint) -> data[hint.get "fox_group"].collection.add hint
-    @hunts.on "add", (hunt) -> data[hunt.get "fox_group"].collection.add hunt
-    @hints.on "remove", (hint) -> data[hint.get "fox_group"].collection.remove hint
-    @hunts.on "remove", (hunt) -> data[hunt.get "fox_group"].collection.remove hunt
-    @hints.on "reset", ->
-      for name, gData of data
-        gData.collection.reset @hints.where fox_group: name
-        gData.collection.add @hunts.where fox_group: name
-    @hunts.on "reset", ->
-      for name, gData of data
-        gData.collection.reset @hints.where fox_group: name
-        gData.collection.add @hunts.where fox_group: name
+    @hints.on "add", (model) =>
+      group = model.get 'fox_group'
+      time = Math.floor(model.get('time')/100000)
+      insert = false
+      for m, i in @collection[group]
+        if model.get('time') < m.get ('time')
+          @collection[group].splice(i, 0, model)
+          insert = true
+          break
+      @collection[group].push(model) if not insert
+      clearInterval @timeout
+      @timeout = setTimeout (=> @render()), 400
+    @hints.on "change", (model) =>
+      clearInterval @timeout
+      @timeout = setTimeout (=> @render()), 400
+      @drawModel model
+    @hints.on "remove", (model) =>
+      clearInterval @timeout
+      group = model.get 'fox_group'
+      for m, i in @collection[group] when m == model
+        @collection[group].splice(i, 1)
+      @timeout = setTimeout (=> @render()), 400
+
+  drawModel: (model) =>
+    group = model.get 'fox_group'
+    @markers[group].setMap(null) if @markers[group]
+    @markers[group] = new m.Marker
+      position: new m.LatLng model.get("lat"), model.get("lng")
+      map: @map
+      icon: "/assets/img/marker_#{group.charAt(0).toUpperCase()}.png"
+    @markers[group].setMap @map
+
+  render: =>
+    for group in window.fox_groups when @collection[group] != null and @collection[group].length > 0
+      model = @collection[group][@collection[group].length - 1]
+      @drawModel model
+      @paths[group].setPath (new m.LatLng(model.get('lat'), model.get('lng')) for model in @collection[group])
+    @
 
   zoom: (location, zoom) ->
     @map.setCenter location
