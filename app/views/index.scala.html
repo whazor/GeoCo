@@ -7,6 +7,7 @@
         <title>geoco</title>
 
         <link rel="stylesheet" href="@routes.Assets.at("css/bootstrap.min.css")">
+        <link rel="stylesheet" href="@routes.Assets.at("css/timepicker.css")">
         <link rel="stylesheet" href="@routes.Assets.at("css/main.css")">
 
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("img/favicon.png")">
@@ -14,6 +15,7 @@
         <script src="@routes.Assets.at("javascripts/jquery-1.7.1.min.js")"></script>
         <script src="@routes.Assets.at("javascripts/bootstrap.min.js")"></script>
         <script src="@routes.Assets.at("javascripts/bootstrapx-clickover.js")"></script>
+        <script src="@routes.Assets.at("javascripts/bootstrap-timepicker.js")"></script>
         <script src="@routes.Assets.at("javascripts/underscore-min.js")"></script>
         <script src="@routes.Assets.at("javascripts/backbone-min.js")"></script>
         <script
@@ -30,7 +32,7 @@
 			<div class="navbar-inner">
 				<a class="brand" href="#">geoco</a>
 				<div class="navbar-form pull-left">
-					<button type="submit" class="btn">Hunt melden</button>
+					<button type="submit" class="btn hunt-btn" data-toggle="modal" data-target="#huntForm">Hunt melden</button>
                     <!--<button type="submit" class="btn">Tegenhunt melden</button>-->
                     <input type="text" placeholder="Adres zoeken" name="search" id="Search">
 				</div>
@@ -41,7 +43,7 @@
 				<div id="maps"></div>
 			</div>
 			<div class="span7" id="hints">
-				<table class="hints table table-bordered">
+				<table id="hints" class="hints table table-bordered">
                     <thead>
 						<tr>
 							<th>Tijd:</th>
@@ -59,5 +61,24 @@
 			</div>
 		</div>
 	</div>
+    <div class="modal hide fade" id="huntForm">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h3>Hunt inleveren</h3>
+        </div>
+        <div class="modal-body">
+            <select class="fox-group-select input-small">
+            </select>
+            <input type="text" placeholder="Locatie" class="location-input" />
+            <span class="input-append">
+                <input type="time" class="input-small time-input" />
+                <span class="add-on"><i class="icon-time"></i></span>
+            </span>
+        </div>
+        <div class="modal-footer">
+            <a href="#" class="btn btn-danger pull-left clear-btn">Reset</a>
+            <a href="#" class="btn btn-primary create-btn">Aanmaken</a>
+        </div>
+    </div>
 </body>
 </html>

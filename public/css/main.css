@@ -48,24 +48,27 @@ html, body.fullscreen {
 .hints th.foxtrot {
 	color: #c3325f;
 }
-table {
+table#hints {
     width: 800px;
 }
-tbody {
+#hints tbody {
     height: 669px;
     overflow: auto;
 }
-thead > tr, tbody{
+#hints thead > tr, tbody{
     display:block;
 }
-td:not(:first-child), th:not(:first-child) {
+#hints td:not(:first-child), th:not(:first-child) {
     width: 79px;
 }
-td:first-child, th:first-child {
+#hints td:first-child, th:first-child {
     width: 60px;
 }
 .clickover, .clickover .inner {
     width: 300px !important;
+}
+.bootstrap-timepicker.dropdown-menu.open {
+    z-index: 1100 !important;
 }
 
 /* @blue:                  #049cdb;
