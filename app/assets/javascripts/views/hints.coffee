@@ -69,10 +69,15 @@ class Hint extends Backbone.View
         $("button.zoom-btn", @form).on "click.clickover", =>
           @maps.zoom new google.maps.LatLng(@model.get("lat"), @model.get("lng")), 13
 
+        $("a.address-a").on "click.clickover", =>
+          window.geocoder.geocode latLng: new google.maps.LatLng @model.get("lat"),  @model.get("lng"), ([result], success) ->
+            $("a.address-a").replaceWith $ """<span title="#{result.formatted_address}">#{result.formatted_address}</span>"""
+
       onHidden: ->
         $("button.create-btn", @form).off "click.clickover"
         $("button.delete-btn", @form).off "click.clickover"
         $("button.zoom-btn", @form).off "click.clickover"
+        $("a.address-a", @form).off "click.clickover"
     @$el.append $('<button class="btn btn-fillin">Invullen</button>')
     @render()
 
@@ -94,6 +99,11 @@ class Hint extends Backbone.View
       text += "  x:    #{@model.get "x"}\n" if @model.has "x"
       text += "  y:    #{@model.get "y"}\n" if @model.has "y"
       $(".data", @form).text text
+      if @model.has("lat") and @model.has "lng"
+        $(".data", @form).append "Adres:\n  "
+        adres = $ """<a class="address-a">Laden</a>"""
+        $(".data", @form).append adres
+
       $(".data", @form).show()
     else
       $(".input-raw", @form).val ""
