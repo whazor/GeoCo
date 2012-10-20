@@ -3,19 +3,20 @@
 # ~~~~
 
 # Home page
-GET		/						controllers.Dashboard.index
-GET		/login					controllers.Application.login
-POST	/login					controllers.Application.authenticate
-GET		/route/:lat/:long		controllers.Routing.route(lat: String, long: String)
+GET		/							controllers.Dashboard.index
+GET		/login						controllers.Application.login
+POST	/login						controllers.Application.authenticate
+GET		/route/:lat/:long			controllers.Routing.route(lat: String, long: String)
 
-GET		/coordinates/			controllers.Coordinates.list(sort: String="all", id:Long?=0)
-GET		/coordinates/:sort		controllers.Coordinates.list(sort: String, id:Long?=0)
-# GET		/coordinates/:id	controllers.Coordinates.read(id: Long)
-PUT		/coordinates/:sort/:id	controllers.Coordinates.update(sort: String, id:Long)
-POST	/coordinates/:sort		controllers.Coordinates.create(sort: String)
-DELETE	/coordinates/:sort/:id	controllers.Coordinates.delete(sort: String, id:Long)
+GET		/coordinates/				controllers.Coordinates.list(sort: String="all", id:Long?=0)
+GET		/coordinates/:sort			controllers.Coordinates.list(sort: String, id:Long?=0)
+# GET		/coordinates/:id		controllers.Coordinates.read(id: Long)
+POST	/coordinates/:sort/check/	controllers.Coordinates.check(sort: String)
+PUT		/coordinates/:sort/:id		controllers.Coordinates.update(sort: String, id:Long)
+POST	/coordinates/:sort			controllers.Coordinates.create(sort: String)
+DELETE	/coordinates/:sort/:id		controllers.Coordinates.delete(sort: String, id:Long)
 
-GET		/geo					controllers.Coordinates.geo(x:Int?=0, y:Int?=0)
+GET		/geo						controllers.Coordinates.geo(x:Int?=0, y:Int?=0)
 
 # Map static resources from the /public folder to the /assets URL path
-GET		/assets/*file			controllers.Assets.at(path="/public", file)
+GET		/assets/*file				controllers.Assets.at(path="/public", file)

@@ -131,6 +131,18 @@ object Coordinates extends Controller with Secured {
     }
   }
 
+  def check(sort: String) = IsAuthenticated { (user, request) =>
+    val body = request.body.asJson.get
+    val res = sort match {
+      case "hints" => hintForm.bind(body)
+      case "hunts" => huntForm.bind(body)
+    }
+    res.fold(
+      formWithErrors => BadRequest(formWithErrors.errorsAsJson),
+      value => Ok("ok")
+    )
+  }
+
   def delete(sort: String, id: Long) = IsAuthenticated { (user, request) =>
     sort match {
       case "hints" => if(Coordinate.delete(id)) {
