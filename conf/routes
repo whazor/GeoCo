@@ -11,7 +11,7 @@ GET		/route/:lat/:long		controllers.Routing.route(lat: String, long: String)
 GET		/coordinates/			controllers.Coordinates.list(sort: String="all", id:Long?=0)
 GET		/coordinates/:sort		controllers.Coordinates.list(sort: String, id:Long?=0)
 # GET		/coordinates/:id	controllers.Coordinates.read(id: Long)
-PUT		/coordinates/:id		controllers.Coordinates.update(id: Long)
+PUT		/coordinates/:sort/:id	controllers.Coordinates.update(sort: String, id:Long)
 POST	/coordinates/:sort		controllers.Coordinates.create(sort: String)
 DELETE	/coordinates/:id		controllers.Coordinates.delete(id: Long)
 

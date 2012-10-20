@@ -134,18 +134,21 @@ object Coordinate {
     }
   }
 
+  private def rawToGeo(raw: String): (Double, Double, Int) = {
+    val r = raw.split(Array(',', ' ', ';'))
+
+    val r1 = r(0)
+    val r2 = r(1)
+
+    val srid = if (r1.toDouble < 100 && r2.toDouble < 100) { 4326 } else { 28992 }
+    val x = if(srid == 4326) { r2.toDouble } else { math.pow(10, math.max(0, 6-(""+r1).length)) * r1.toDouble }
+    val y = if(srid == 4326) { r1.toDouble } else { math.pow(10, math.max(0, 6-(""+r2).length)) * r2.toDouble }
+    (x, y, srid)
+  }
+
   def createHint(fox_group: String, user: User, raw: String, hour: Int): Option[Coordinate] = {
     DB.withConnection { implicit connection =>
-      //  ST_AsText(ST_Transform(ST_SetSRID(ST_Point(21075, 46821), 28991), 4326))
-      val r = raw.split(Array(',', ' ', ';'))
-
-      val r1 = r(0)
-      val r2 = r(1)
-
-      val srid = if (r1.toDouble < 100 && r2.toDouble < 100) { 4326 } else { 28992 }
-      val x = if(srid == 4326) { r2.toDouble } else { math.pow(10, math.max(0, 6-(""+r1).length)) * r1.toDouble }
-      val y = if(srid == 4326) { r1.toDouble } else { math.pow(10, math.max(0, 6-(""+r2).length)) * r2.toDouble }
-
+      val (x, y, srid) = rawToGeo(raw)
       val insertId = SQL(
         """
         INSERT INTO hints(fox_group, created_at, user_id, raw, point, hint_hour)
@@ -163,6 +166,32 @@ object Coordinate {
         case Some(id) => getById(id, "hints")
         case None => None
       }
+    }
+  }
+  def updateHint(id: Long, fox_group: String, user: User, raw: String, hour: Int): Option[Coordinate] = {
+    DB.withConnection { implicit connection =>
+      val (x, y, srid) = rawToGeo(raw)
+      val updateId = SQL(
+        """
+        UPDATE hints
+        SET
+          fox_group = {fox_group},
+          user_id = {user_id},
+          raw = {raw},
+          point =  ST_Transform(ST_SetSRID(ST_Point({x}, {y}), {srid}), 4326),
+          hint_hour = {hour}
+        WHERE coordinate_id = {id};
+        """).on(
+        'fox_group -> fox_group,
+        'user_id -> user.id,
+        'raw -> raw,
+        'x -> x,
+        'y -> y,
+        'hour -> hour,
+        'srid -> srid,
+        'id -> id
+      ).executeUpdate()
+      getById(id, "hints")
     }
   }
 }

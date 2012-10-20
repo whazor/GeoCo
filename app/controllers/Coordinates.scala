@@ -36,8 +36,24 @@ object Coordinates extends Controller with Secured {
 //  def read(id: Long) = IsAuthenticated { (user, request) =>
 //    Ok("Your new application is ready.")
 //  }
-  def update(id: Long) = IsAuthenticated { (user, request) =>
-    Ok("Your new application is ready.")
+  def update(sort: String, id: Long) = IsAuthenticated { (user, request) =>
+    val body = request.body.asJson.get
+    sort match {
+      case "hints" =>
+        hintForm.bind(body).fold(
+          formWithErrors => BadRequest(formWithErrors.errorsAsJson),
+          value => Ok(
+            Coordinate.updateHint(
+              id,
+              value._1,
+              user,
+              value._3,
+              value._2
+            ).get.toJson
+          )
+        )
+      case _ => BadRequest("Sort unknown")
+    }
   }
   def create(sort: String) = IsAuthenticated { (user, request) =>
     val body = request.body.asJson.get
@@ -54,7 +70,6 @@ object Coordinates extends Controller with Secured {
             ).get.toJson
           )
         )
-      //case "hunts" =>
       case _ => BadRequest("Sort unknown")
     }
   }
