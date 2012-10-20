@@ -47,16 +47,25 @@ class @views.Maps extends Backbone.View
         name = $("name", mark).text()
         [lng, lat] = (parseFloat x for x in $("Point coordinates", mark).text().split(/,/))
         pos = new google.maps.LatLng lat, lng
-        groupMarkers.push new m.Marker
-          position: pos
-          map: map
-          icon:
-            path: google.maps.SymbolPath.CIRCLE
+        groupMarkers.push
+          marker: new m.Marker
+            position: pos
+            map: map
+            icon:
+              path: google.maps.SymbolPath.CIRCLE
+              fillColor: "#11BB11"
+              fillOpacity: 1
+              strokeWeight: 1
+              scale: 3
+            title: "#{name}: #{lat}, #{lng}"
+          circle: new m.Circle
+            center: pos
+            map: map
+            radius: 500
+            strokeColor: "#11BB11"
+            strokeOpacity: 0.8
             fillColor: "#11BB11"
-            fillOpacity: 1
-            strokeWeight: 1
-            scale: 3
-          title: "#{name}: #{lat}, #{lng}"
+            fillOpacity: 0.1
 
 
     for group in window.fox_groups
