@@ -59,7 +59,7 @@ class Hint extends Backbone.View
             save()
           else
             window.geocoder.geocode address: data.raw, (results, status) ->
-              return unless status == google.maps.GeocoderStatus.OK2
+              return unless status == google.maps.GeocoderStatus.OK
               data.raw = "#{results[0].geometry.location.lat()} #{results[0].geometry.location.lng()}"
               save()
         $("button.delete-btn", @form).on "click.clickover", =>
