@@ -194,4 +194,13 @@ object Coordinate {
       getById(id, "hints")
     }
   }
+  def delete(id: Long): Boolean = {
+    DB.withConnection { implicit connection =>
+      SQL(
+        """
+          |DELETE FROM coordinates
+          |WHERE coordinate_id = {id};
+        """.stripMargin).on('id -> id).executeUpdate() > 0
+    }
+  }
 }

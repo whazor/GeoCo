@@ -33,9 +33,25 @@ object Coordinates extends Controller with Secured {
       "raw" -> text
     )
   )
-//  def read(id: Long) = IsAuthenticated { (user, request) =>
-//    Ok("Your new application is ready.")
-//  }
+  def create(sort: String) = IsAuthenticated { (user, request) =>
+    val body = request.body.asJson.get
+    sort match {
+      case "hints" =>
+        hintForm.bind(body).fold(
+          formWithErrors => BadRequest(formWithErrors.errorsAsJson),
+          value => Ok(
+            Coordinate.createHint(
+              value._1,
+              user,
+              value._3,
+              value._2
+            ).get.toJson
+          )
+        )
+      case _ => BadRequest("Sort unknown")
+    }
+  }
+
   def update(sort: String, id: Long) = IsAuthenticated { (user, request) =>
     val body = request.body.asJson.get
     sort match {
@@ -55,25 +71,11 @@ object Coordinates extends Controller with Secured {
       case _ => BadRequest("Sort unknown")
     }
   }
-  def create(sort: String) = IsAuthenticated { (user, request) =>
-    val body = request.body.asJson.get
+
+  def delete(sort: String, id: Long) = IsAuthenticated { (user, request) =>
     sort match {
-      case "hints" =>
-        hintForm.bind(body).fold(
-          formWithErrors => BadRequest(formWithErrors.errorsAsJson),
-          value => Ok(
-            Coordinate.createHint(
-              value._1,
-              user,
-              value._3,
-              value._2
-            ).get.toJson
-          )
-        )
+      case "hints" => if(Coordinate.delete(id)) { Ok("done.") } else { BadRequest("Failed") }
       case _ => BadRequest("Sort unknown")
     }
-  }
-  def delete(id: Long) = IsAuthenticated { (user, request) =>
-    Ok("Your new application is ready.")
   }
 }
