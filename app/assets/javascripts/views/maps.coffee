@@ -9,6 +9,10 @@ class @views.Maps extends Backbone.View
     window.Clock.listeners.push ->
       for name, gData of data
         gData.poly.setPath gData.collection.map (model) -> new m.LatLng model.get("lat"), model.get "lng"
+        if gData.collection.length != 0
+          model = gData.collection.at(gData.collection.length - 1)
+          gData.marker.setPosition(new google.maps.LatLng model.get("lat"), model.get "lng")
+      return
 
     @$el = $(@el)
     window.map = new m.Map @el,
@@ -28,10 +32,10 @@ class @views.Maps extends Backbone.View
       for name, data of json
         p = new m.Polygon
           paths: new m.LatLng(lat, lng) for {lat, lng} in data.points,
-          strokeColor: window.fox_colors[name],
+          strokeColor: data.color,
           strokeOpacity: 0.8,
           strokeWeight: 2,
-          fillColor: window.fox_colors[name],
+          fillColor: data.color,
           fillOpacity: 0.05
         p.setMap(map)
       deelgebieden[name] = poly: p, points: data.points
@@ -46,6 +50,9 @@ class @views.Maps extends Backbone.View
           strokeOpacity: 1.0
           strokeWeight: 2
           map: map
+        marker: new m.Marker
+          map: map
+          icon: "/assets/img/marker_#{group.charAt(0).toUpperCase()}.png"
       gData.collection.comperator = (coord) -> coord.time ? 0
       gData.collection.on "change", ->
         gData.poly.setPath gData.collection.map (model) -> new m.LatLng model.get("lat"), model.get "lng"

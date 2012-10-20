@@ -11,5 +11,6 @@ class @views.Dashboard extends Backbone.View
             map.setCenter(result.geometry.location)
             map.setZoom(13)
     initialize: (coordinates) ->
-        @maps = new views.Maps window.hints, window.hunts
-        @hints = new views.Hints window.hints
+      $("body").addClass("fullscreen") if window.location.hash == "#fullscreen"
+      @maps = new views.Maps window.hints, window.hunts
+      @hints = new views.Hints window.hints

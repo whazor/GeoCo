@@ -12,12 +12,12 @@ $ =>
 
 window.fox_groups = ["alpha", "bravo", "charlie", "delta", "echo", "foxtrot"]
 window.fox_colors =
-  alpha: "#9d261d"
-  bravo: "#46a546"
-  charlie: "#0064cd"
-  delta: "#049cdb"
-  echo: "#d5a100"
-  foxtrot: "#c3325f"
+  alpha: "#FF0000"
+  bravo: "#00FF00"
+  charlie: "#0000FF"
+  delta: "#00FFFF"
+  echo: "#FF00FF"
+  foxtrot: "#FFFF00"
 window.MapHour = (i) ->
   ToDate: ->
     base = new Date(2012, 10, 20, 9, 0, 0)
