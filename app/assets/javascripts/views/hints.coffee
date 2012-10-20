@@ -2,7 +2,7 @@
 current = false
 class @views.Hints extends Backbone.View
   el: '#hints table tbody'
-  initialize: (@collection, options) ->
+  initialize: (@collection, @maps, options) ->
     @hints = []
     @collection.bind 'add', @set, @
     @collection.bind 'reset', (-> _.each @collection.models, @set), @

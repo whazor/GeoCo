@@ -18,6 +18,9 @@ class Hint extends Coordinate
 
 class Hunt extends Coordinate
 
+class window.CoordinateCollection extends Backbone.Collection
+
+
 class window.HuntCollection extends Backbone.Collection
   model: Hunt
   url: '/coordinates/hunts'

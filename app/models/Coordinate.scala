@@ -109,6 +109,26 @@ object Coordinate {
       |, found_at
       |, found_at as hint_time
     """.stripMargin
+
+  def all: Seq[Coordinate] = {
+    DB.withConnection { implicit connection =>
+      SQL(
+        """
+            select 'hint' as type,
+        """ + sqlCoordinate + sqlHint +
+          """
+          from hints
+          """).as(Coordinate.simple *) ++
+        SQL(
+          """
+         select 'hunt' as type,
+          """ + sqlCoordinate + sqlHunt +
+            """, found_at
+          from hunts
+            """).as(Coordinate.simple *)
+    }
+  }
+
   def allFromId(id: Long): Seq[Coordinate] = {
     DB.withConnection { implicit connection =>
       SQL(

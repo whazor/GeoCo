@@ -8,6 +8,7 @@ import play.api.Play.current
 import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
+import play.api.cache.Cache
 
 import libs.json.{JsObject, Json}
 import play.api.libs.json.Json._
@@ -16,20 +17,34 @@ import models.{LatLng, Hunt, Hint, Coordinate}
 object Coordinates extends Controller with Secured {
 
   def list(sort: String, id: Long) = IsAuthenticated { (user, request) =>
+//    Cache.getOrElseAs[Seq[Coordinate]]("coordinates_hints") {}
+    def cs:Seq[Coordinate] = sort match {
+      case "hints" => Cache.getOrElse[Seq[Coordinate]]("coordinates_hints") { getList("hints") }.filter(c => c.id.get > id)
+      case "hunts" => Cache.getOrElse[Seq[Coordinate]]("coordinates_hunts") { getList("hunts") }.filter(c => c.id.get > id)
+      case _ => Cache.getOrElse[Seq[Coordinate]]("coordinates_all") { getList("all") }.filter(c => c.id.get > id)
+    }
+    Ok(toJson(cs.map(h => h.toJson)))
+  }
+  private def resetList() = {
+    Cache.set("coordinates_hints", getList("hints"))
+    Cache.set("coordinates_hunts", getList("hunts"))
+    Cache.set("coordinates_all", getList("all"))
+  }
+  private def getList(sort: String): Seq[Coordinate] = {
     sort match {
-      case "hints" =>
-        Ok(toJson(Coordinate.allFromId(id).filter(c => c match {
-          case x:Hint => true
-          case _ => false
-        }).map(h => h.toJson)))
-      case "hunts" =>
-        Ok(toJson(Coordinate.allFromId(id).filter(c => c match {
-          case x:Hunt => true
-          case _ => false
-        }).map(h => h.toJson)))
-      case _ => Ok(toJson(Coordinate.allFromId(id).map(h => h.toJson)))
+        case "hints" =>
+          Coordinate.all.filter(c => c match {
+            case x:Hint => true
+            case _ => false })
+        case "hunts" =>
+          Coordinate.all.filter(c => c match {
+            case x:Hunt => true
+            case _ => false })
+        case _ => Coordinate.all
     }
   }
+
+
   val hintForm = Form(
     tuple(
       "fox_group" -> text,
@@ -43,15 +58,49 @@ object Coordinates extends Controller with Secured {
       case "hints" =>
         hintForm.bind(body).fold(
           formWithErrors => BadRequest(formWithErrors.errorsAsJson),
-          value => Ok(
-            Coordinate.createHint(
+          value => {
+            val c = Coordinate.createHint(
+                value._1,
+                user,
+                value._3,
+                value._2
+              ).get.toJson
+            resetList()
+            Ok(c)
+          }
+        )
+      case _ => BadRequest("Sort unknown")
+    }
+  }
+
+  def update(sort: String, id: Long) = IsAuthenticated { (user, request) =>
+    val body = request.body.asJson.get
+    sort match {
+      case "hints" =>
+        hintForm.bind(body).fold(
+          formWithErrors => BadRequest(formWithErrors.errorsAsJson),
+          value => {
+            val c = Coordinate.updateHint(
+              id,
               value._1,
               user,
               value._3,
               value._2
             ).get.toJson
-          )
+            resetList()
+            Ok(c)
+          }
         )
+      case _ => BadRequest("Sort unknown")
+    }
+  }
+
+  def delete(sort: String, id: Long) = IsAuthenticated { (user, request) =>
+    sort match {
+      case "hints" => if(Coordinate.delete(id)) {
+        resetList()
+        Ok("done.")
+      } else { BadRequest("Failed") }
       case _ => BadRequest("Sort unknown")
     }
   }
@@ -75,33 +124,6 @@ object Coordinates extends Controller with Secured {
           "lng" -> latlng.long
         )
       ))
-    }
-  }
-
-  def update(sort: String, id: Long) = IsAuthenticated { (user, request) =>
-    val body = request.body.asJson.get
-    sort match {
-      case "hints" =>
-        hintForm.bind(body).fold(
-          formWithErrors => BadRequest(formWithErrors.errorsAsJson),
-          value => Ok(
-            Coordinate.updateHint(
-              id,
-              value._1,
-              user,
-              value._3,
-              value._2
-            ).get.toJson
-          )
-        )
-      case _ => BadRequest("Sort unknown")
-    }
-  }
-
-  def delete(sort: String, id: Long) = IsAuthenticated { (user, request) =>
-    sort match {
-      case "hints" => if(Coordinate.delete(id)) { Ok("done.") } else { BadRequest("Failed") }
-      case _ => BadRequest("Sort unknown")
     }
   }
 }
