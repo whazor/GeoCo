@@ -12,4 +12,4 @@ class @views.Dashboard extends Backbone.View
     initialize: (coordinates) =>
       $("body").addClass("fullscreen") if window.location.hash == "#fullscreen"
       @maps = new views.Maps window.hints, window.hunts
-      @hints = new views.Hints window.hints
+      @hints = new views.Hints window.hints, @maps
