@@ -45,8 +45,9 @@ class Hint extends Backbone.View
             raw: $(".input-raw", @form).val()
           save = =>
             if(@model)
+              console.log "test"
               @model.set data
-              @model.save
+              @model.save()
             else
               @collection.create data
           if /\d+(\.\d+)?[, ;]+\d+(\.\d+)?/.test data.raw
@@ -66,4 +67,6 @@ class Hint extends Backbone.View
     @model.bind 'change', @render
     @render()
   render: =>
-    $(".input-raw", @form).val @model?.get "raw"
+    if @model?
+      @$el.css "background-color", "#e6fbe6"
+      $(".input-raw", @form).val @model.get "raw"
