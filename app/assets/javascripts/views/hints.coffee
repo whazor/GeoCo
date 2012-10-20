@@ -7,7 +7,7 @@ class @views.Hints extends Backbone.View
     @collection.bind 'add', @set, @
     @collection.bind 'reset', (-> _.each @collection.models, @set), @
     @$el.empty()
-    for hour in [0..30]
+    for hour in [15..30]
       @hints[hour] ||= []
       tr = $ "<tr id=hour-#{hour}><th>#{window.MapHour(hour).ToString()}</th></tr>"
       for name, index in window.fox_groups
