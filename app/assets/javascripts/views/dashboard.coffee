@@ -6,11 +6,10 @@ class @views.Dashboard extends Backbone.View
         "keydown #Search": (e) ->
           return unless e.keyCode == 13
           val = $("#Search", @$el).val()
-          window.geocoder.geocode address: val, ([result], status) ->
+          window.geocoder.geocode address: val, ([result], status) =>
             return unless status = google.maps.GeocoderStatus.OK
-            map.setCenter(result.geometry.location)
-            map.setZoom(13)
-    initialize: (coordinates) ->
+            @maps.zoom result.geometry.location, 13
+    initialize: (coordinates) =>
       $("body").addClass("fullscreen") if window.location.hash == "#fullscreen"
       @maps = new views.Maps window.hints, window.hunts
       @hints = new views.Hints window.hints
