@@ -20,6 +20,7 @@ class @views.Maps extends Backbone.View
     @map = new m.Map @el,
         zoom: 13,
         mapTypeId: m.MapTypeId.ROADMAP
+        scaleControl: true
     allowedBounds = new m.LatLngBounds new m.LatLng(51.7337, 4.9937), new m.LatLng(52.5219, 6.8330)
     @map.fitBounds(allowedBounds)
     lastValidCenter = @map.getCenter()
