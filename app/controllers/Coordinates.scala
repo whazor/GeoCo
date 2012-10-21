@@ -55,7 +55,7 @@ object Coordinates extends Controller with Secured {
   val huntForm = Form(
     tuple(
       "fox_group" -> text,
-      "found_at" -> play.api.data.Forms.date,
+      "found_at" -> longNumber,
       "raw" -> text
     )
   )
@@ -84,7 +84,7 @@ object Coordinates extends Controller with Secured {
               value._1,
               user,
               value._3,
-              value._2
+              new java.util.Date(value._2)
             ).get.toJson
             resetList()
             Ok(c)
@@ -121,7 +121,7 @@ object Coordinates extends Controller with Secured {
               value._1,
               user,
               value._3,
-              value._2
+              new java.util.Date(value._2)
             ).get.toJson
             resetList()
             Ok(c)

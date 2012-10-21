@@ -158,7 +158,7 @@ object Coordinate {
           from hints where coordinate_id = {id} limit 1""").on("id" -> id).as(Coordinate.simple.singleOpt)
         case "hunts" => SQL("""
           select 'hunt' as type,""" + sqlCoordinate + sqlHunt + """
-          from hints where coordinate_id = {id} limit 1""").on("id" -> id).as(Coordinate.simple.singleOpt)
+          from hunts where coordinate_id = {id} limit 1""").on("id" -> id).as(Coordinate.simple.singleOpt)
       }
     }
   }
