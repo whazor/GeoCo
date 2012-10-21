@@ -39,10 +39,10 @@ class @views.Dashboard extends Backbone.View
             save()
       $(".smaller-btn").click ->
         zoom *= 0.9
-        $("body").css "zoom", "#{zoom}%"
+        $("body").animate zoom: "#{zoom}%", "fast"
       $(".larger-btn").click ->
         zoom /= 0.9
-        $("body").css "zoom", "#{zoom}%"
+        $("body").animate zoom: "#{zoom}%", "fast"
 
       @maps = new views.Maps window.hints, window.hunts
       @hints = new views.Hints window.hints, @maps
