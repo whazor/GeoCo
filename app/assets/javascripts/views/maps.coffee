@@ -74,6 +74,7 @@ class @views.Maps extends Backbone.View
       position: new m.LatLng model.get("lat"), model.get("lng")
       map: @map
       icon: "/assets/img/marker_#{group.charAt(0).toUpperCase()}.png"
+      title: new Date(model.get("time")).toLocaleTimeString().slice(0, 5)
     @markers[group].setMap @map
 
   render: =>
