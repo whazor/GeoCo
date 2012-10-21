@@ -1,4 +1,5 @@
 @views ||= {}
+zoom = 100
 class @views.Dashboard extends Backbone.View
     el: '#app'
     events:
@@ -36,6 +37,12 @@ class @views.Dashboard extends Backbone.View
             return unless status == google.maps.GeocoderStatus.OK
             data.raw = "#{results[0].geometry.location.lat()} #{results[0].geometry.location.lng()}"
             save()
+      $(".smaller-btn").click ->
+        zoom *= 0.9
+        $("body").css "zoom", "#{zoom}%"
+      $(".larger-btn").click ->
+        zoom /= 0.9
+        $("body").css "zoom", "#{zoom}%"
 
       @maps = new views.Maps window.hints, window.hunts
       @hints = new views.Hints window.hints, @maps
