@@ -6,7 +6,6 @@ class @views.Maps extends Backbone.View
   el: '#maps'
   initialize: (@hints, @hunts) ->
     @deelgebieden = {}
-    @groupMarkers = []
     @markers = []
     @collection = {}
     @timeout = null
@@ -42,7 +41,6 @@ class @views.Maps extends Backbone.View
 
     addModel = (model) =>
       group = model.get 'fox_group'
-      time = Math.floor(model.get('time')/100000)
       insert = false
       for m, i in @collection[group]
         if model.get('time') < m.get ('time')
