@@ -15,6 +15,21 @@ class @views.Hints extends Backbone.View
         tr.append hint.el
         hint.render()
       @$el.append tr
+      tr.css 'cursor', 'pointer'
+      tr.attr 'data-hour', hour
+      tr.on "click", (e) =>
+        tr = $ e.target
+        hour = parseInt(tr.parent().attr('data-hour'))
+        o = ""
+        for name, index in window.fox_groups when @hints[hour][name].model?
+          model = @hints[hour][name].model
+          group = name.charAt(0).toUpperCase() + name.slice(1)
+          o += "$('input[name=i#{group}1]')[0].value = '#{model.get 'x'}';\n"
+          o += "$('input[name=i#{group}2]')[0].value = '#{model.get 'y'}';\n"
+        tr.popover(
+          title: "copypaste"
+          content: "<textarea>"+o+"</textarea>"
+        ).popover("show")
     @
 
   set: (h) =>
