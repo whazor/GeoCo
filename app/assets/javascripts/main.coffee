@@ -27,7 +27,7 @@ window.MapHour = (i) ->
 window.MapTime = (time) ->
   ToHour: ->
     base = new Date(2012, 9, 20, 9, 0, 0)
-    (time - base.getTime()) / 1000 / 60 / 60
+    ((time - base.getTime()) / 1000 / 60 / 60) % 30
 
 class @Clock
   @listeners = []
