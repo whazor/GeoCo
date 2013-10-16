@@ -21,25 +21,18 @@ Installeren
 
 ### Play framework:
 
-- http://www.playframework.org/documentation/2.0.4/Installing
+- http://www.playframework.com/documentation/2.0.x/Installing
 
 ### Database:
 
 - http://www.postgresql.org/download/windows/
 - http://postgis.refractions.net/download/windows/
-- http://mycel.nl/gelderland.gz (420mb)
 
 De database maken:
 
-    CREATE DATABASE osmosis;
-    USE osmosis;
-    CREATE EXTENSION postgis;
-    CREATE EXTENSION hstore;
     CREATE DATABASE geoco;
     USE geoco;
     CREATE EXTENSION postgis;
-
-Daarna het Gederland.gz bestand inladen op de osmosis database.
 
 Usefull links
 -------------
