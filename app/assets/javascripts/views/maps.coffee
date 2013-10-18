@@ -92,14 +92,14 @@ class @views.Maps extends Backbone.View
     $.getJSON "/assets/javascripts/deelgebied.json", (json) =>
       for name, data of json
         p = new m.Polygon
-          paths: new m.LatLng(lat, lng) for {lat, lng} in data.points,
+          paths: (new m.LatLng(lat, lng) for {lat, lng} in data.points),
           strokeColor: data.color,
           strokeOpacity: 0.8,
           strokeWeight: 2,
           fillColor: data.color,
           fillOpacity: 0.05
         p.setMap @map
-      @deelgebieden[name] = poly: p, points: data.points
+        @deelgebieden[name] = poly: p, points: data.points
 
   getGroepen: =>
     $.get "/assets/kml/groepen.kml", (raw) =>
