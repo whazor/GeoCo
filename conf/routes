@@ -6,7 +6,7 @@
 GET		/							controllers.Dashboard.index
 GET		/login						controllers.Application.login
 POST	/login						controllers.Application.authenticate
-GET		/route/:lat/:long			controllers.Routing.route(lat: String, long: String)
+# GET		/route/:lat/:long			controllers.Routing.route(lat: String, long: String)
 
 GET		/coordinates/				controllers.Coordinates.list(sort: String="all", id:Long?=0)
 GET		/coordinates/:sort			controllers.Coordinates.list(sort: String, id:Long?=0)
