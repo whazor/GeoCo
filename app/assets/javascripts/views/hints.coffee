@@ -26,10 +26,10 @@ class @views.Hints extends Backbone.View
           group = name.charAt(0).toUpperCase() + name.slice(1)
           o += "$('input[name=i#{group}1]')[0].value = '#{model.get 'x'}';\n"
           o += "$('input[name=i#{group}2]')[0].value = '#{model.get 'y'}';\n"
-        tr.popover(
+        tr.clickover
           title: "copypaste"
           content: "<textarea>"+o+"</textarea>"
-        ).popover("show")
+
     @
 
   set: (h) =>
