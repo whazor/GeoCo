@@ -3,7 +3,7 @@ zoom = 100
 class @views.Dashboard extends Backbone.View
     el: '#app'
     events:
-        "click .brand": -> false,
+        "click .brand": -> false
         "keydown #Search": (e) ->
           return unless e.keyCode == 13
           val = $("#Search", @$el).val()
