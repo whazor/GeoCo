@@ -42,8 +42,8 @@ class @views.Maps extends Backbone.View
     addModel = (model) =>
       group = model.get 'fox_group'
       insert = false
-      for m, i in @collection[group]
-        if model.get('time') < m.get ('time')
+      for c, i in @collection[group]
+        if model.get('time') < c.get ('time')
           @collection[group].splice(i, 0, model)
           insert = true
           break
@@ -61,7 +61,7 @@ class @views.Maps extends Backbone.View
     removeModel = (model) =>
       clearInterval @timeout
       group = model.get 'fox_group'
-      for m, i in @collection[group] when m == model
+      for c, i in @collection[group] when c == model
         @collection[group].splice(i, 1)
       @timeout = setTimeout (=> @render()), 400
     @hints.on "remove", removeModel
