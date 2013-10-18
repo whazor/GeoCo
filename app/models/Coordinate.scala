@@ -102,7 +102,7 @@ object Coordinate {
   val sqlHint =
     """
       |, hint_hour
-      |, timestamp '2012-10-20 08:55:00' + (hint_hour || ' hours')::interval as hint_time
+      |, timestamp '2013-10-19 08:55:00' + (hint_hour || ' hours')::interval as hint_time
     """.stripMargin
   val sqlHunt =
     """
