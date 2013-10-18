@@ -1,29 +1,26 @@
 package controllers
 
-import play.api._
 import play.api.db._
 import anorm._
-import anorm.SqlParser._
 import play.api.Play.current
 import play.api.mvc._
-import play.api.data._
-import play.api.data.Forms._
 import play.api.cache.Cache
 
-import libs.json.{JsObject, Json}
-import play.api.libs.json.Json._
-import models.{LatLng, Hunt, Hint, Coordinate}
+
+import play.api.libs.json._
+
+import models.{LatLng, Coordinate}
+import java.util.Date
 
 object Coordinates extends Controller with Secured {
-
+  /* caching */
   def list(sort: String, id: Long) = IsAuthenticated { (user, request) =>
-//    Cache.getOrElseAs[Seq[Coordinate]]("coordinates_hints") {}
     def cs:Seq[Coordinate] = sort match {
       case "hints" => Cache.getOrElse[Seq[Coordinate]]("coordinates_hints") { getList("hints") }.filter(c => c.id.get > id)
       case "hunts" => Cache.getOrElse[Seq[Coordinate]]("coordinates_hunts") { getList("hunts") }.filter(c => c.id.get > id)
       case _ => Cache.getOrElse[Seq[Coordinate]]("coordinates_all") { getList("all") }.filter(c => c.id.get > id)
     }
-    Ok(toJson(cs.map(h => h.toJson)))
+    Ok(Json.toJson(cs.map(h => h.toJson)))
   }
   private def resetList() = {
     Cache.set("coordinates_hints", getList("hints"))
@@ -33,118 +30,83 @@ object Coordinates extends Controller with Secured {
   private def getList(sort: String): Seq[Coordinate] = {
     sort match {
         case "hints" =>
-          Coordinate.all.filter(c => c match {
-            case x:Hint => true
-            case _ => false })
+          Coordinate.all.filter { _.isInstanceOf[Hint] }
         case "hunts" =>
-          Coordinate.all.filter(c => c match {
-            case x:Hunt => true
-            case _ => false })
+          Coordinate.all.filter { _.isInstanceOf[Hunt] }
         case _ => Coordinate.all
     }
   }
 
+  case class Hint(fox_group: String, hour: Int, raw: String)
+  case class Hunt(fox_group: String, found_at: Int, raw: String)
 
-  val hintForm = Form(
-    tuple(
-      "fox_group" -> text,
-      "hour" -> number,
-      "raw" -> text
-    )
-  )
-  val huntForm = Form(
-    tuple(
-      "fox_group" -> text,
-      "found_at" -> longNumber,
-      "raw" -> text
-    )
-  )
-  def create(sort: String) = IsAuthenticated { (user, request) =>
-    val body = request.body.asJson.get
+  def check(sort: String) = IsAuthenticated { (user, request) =>
     sort match {
-      case "hints" =>
-        hintForm.bind(body).fold(
-          formWithErrors => BadRequest(formWithErrors.errorsAsJson),
-          value => {
-            val c = Coordinate.createHint(
-                value._1,
-                user,
-                value._3,
-                value._2
-              ).get.toJson
-            resetList()
-            Ok(c)
-          }
-        )
-      case "hunts" =>
-        huntForm.bind(body).fold(
-          formWithErrors => BadRequest(formWithErrors.errorsAsJson),
-          value => {
-            val c = Coordinate.createHunt(
-              value._1,
-              user,
-              value._3,
-              new java.util.Date(value._2)
-            ).get.toJson
-            resetList()
-            Ok(c)
-          }
-        )
+      case "hints" => Json.reads[Hint].reads(request.body.asJson.get).fold(
+        invalid = { errors => BadRequest(JsError.toFlatJson(errors)) },
+        valid = { res => Ok("ok")
+        })
+
+      case "hunts" => Json.reads[Hunt].reads(request.body.asJson.get).fold(
+        invalid = { errors => BadRequest(JsError.toFlatJson(errors)) },
+        valid = { res => Ok("ok") })
+
+      case _ => BadRequest("Sort unknown")
+    }
+  }
+
+  /**
+   * Creates a coordinate.
+   * @param sort a hint or a hunt.
+   * @return
+   */
+  def create(sort: String) = IsAuthenticated { (user, request) =>
+    sort match {
+      case "hints" => Json.reads[Hint].reads(request.body.asJson.get).fold(
+        invalid = { errors => BadRequest(JsError.toFlatJson(errors)) },
+        valid = { res =>
+          val c = Coordinate.createHint(res.fox_group, user, res.raw, res.hour).get.toJson
+          resetList()
+          Ok(c)
+        })
+      case "hunts" => Json.reads[Hunt].reads(request.body.asJson.get).fold(
+        invalid = { errors => BadRequest(JsError.toFlatJson(errors)) },
+        valid = { res =>
+          val c = Coordinate.createHunt(res.fox_group, user, res.raw, new Date(res.found_at)).get.toJson
+          resetList()
+          Ok(c)
+        })
       case _ => BadRequest("Sort unknown")
     }
   }
 
   def update(sort: String, id: Long) = IsAuthenticated { (user, request) =>
-    val body = request.body.asJson.get
     sort match {
-      case "hints" =>
-        hintForm.bind(body).fold(
-          formWithErrors => BadRequest(formWithErrors.errorsAsJson),
-          value => {
-            val c = Coordinate.updateHint(
-              id,
-              value._1,
-              user,
-              value._3,
-              value._2
-            ).get.toJson
-            resetList()
-            Ok(c)
-          }
-        )
-      case "hunts" =>
-        huntForm.bind(body).fold(
-          formWithErrors => BadRequest(formWithErrors.errorsAsJson),
-          value => {
-            val c = Coordinate.updateHunt(
-              id,
-              value._1,
-              user,
-              value._3,
-              new java.util.Date(value._2)
-            ).get.toJson
-            resetList()
-            Ok(c)
-          }
-        )
+      case "hints" => Json.reads[Hint].reads(request.body.asJson.get).fold(
+        invalid = { errors => BadRequest(JsError.toFlatJson(errors)) },
+        valid = { res =>
+          val c = Coordinate.updateHint(id, res.fox_group, user, res.raw, res.hour).get.toJson
+          resetList()
+          Ok(c)
+        })
+      case "hunts" => Json.reads[Hunt].reads(request.body.asJson.get).fold(
+        invalid = { errors => BadRequest(JsError.toFlatJson(errors)) },
+        valid = { res =>
+          val c = Coordinate.updateHunt(id, res.fox_group, user, res.raw, new Date(res.found_at)).get.toJson
+          resetList()
+          Ok(c)
+        })
       case _ => BadRequest("Sort unknown")
     }
   }
 
-  def check(sort: String) = IsAuthenticated { (user, request) =>
-    val body = request.body.asJson.get
-    val res = sort match {
-      case "hints" => hintForm.bind(body)
-      case "hunts" => huntForm.bind(body)
-    }
-    res.fold(
-      formWithErrors => BadRequest(formWithErrors.errorsAsJson),
-      value => Ok("ok")
-    )
-  }
-
   def delete(sort: String, id: Long) = IsAuthenticated { (user, request) =>
     sort match {
+      case "hunts" => if(Coordinate.delete(id)) {
+        resetList()
+        Ok("done.")
+      } else { BadRequest("Failed") }
+
       case "hints" => if(Coordinate.delete(id)) {
         resetList()
         Ok("done.")
@@ -166,11 +128,9 @@ object Coordinates extends Controller with Secured {
       def c = p2.split(" ")
       def latlng = LatLng(c(0).toDouble, c(1).toDouble)
 
-      Ok(toJson(
-        Map(
-          "lat" -> latlng.lat,
-          "lng" -> latlng.long
-        )
+      Ok(Json.obj(
+        "lat" -> latlng.lat,
+        "lng" -> latlng.long
       ))
     }
   }

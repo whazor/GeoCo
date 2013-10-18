@@ -32,32 +32,6 @@ abstract class Coordinate() {
     "raw" -> Json.toJson(raw)
   )
 }
-case class Hint(
-    id: Pk[Long],
-    fox_group: String,
-    created_at: Date,
-    user_id: Pk[Int],
-    raw: String,
-    point: LatLng,
-    point_rgd: (Int, Int),
-    time: Date,
-    hour: Int
-    ) extends Coordinate {
-  def toJson: JsValue = Json.toJson(map ++ Map("hour" -> Json.toJson(hour)))
-}
-case class Hunt(
-    id: Pk[Long],
-    fox_group: String,
-    created_at: Date,
-    user_id: Pk[Int],
-    raw: String,
-    point: LatLng,
-    point_rgd: (Int, Int),
-    time: Date,
-    found_at: Date
-    ) extends Coordinate {
-  def toJson: JsValue = Json.toJson(map ++ Map("found_at" -> Json.toJson(found_at.toString())))
-}
 
 object Coordinate {
   val simple = {
@@ -90,13 +64,13 @@ object Coordinate {
   }
   val sqlCoordinate =
     """
-      |coordinate_id,
-      |fox_group,
-      |created_at,
-      |raw,
-      |ST_AsText(point) as point_4326,
-      |ST_AsText(ST_Transform(point, 28992)) as point_28992,
-      |user_id
+      coordinate_id,
+      fox_group,
+      created_at,
+      raw,
+      ST_AsText(point) as point_4326,
+      ST_AsText(ST_Transform(point, 28992)) as point_28992,
+      user_id
     """.stripMargin
 
   val sqlHint =
@@ -106,8 +80,8 @@ object Coordinate {
     """.stripMargin
   val sqlHunt =
     """
-      |, found_at
-      |, found_at as hint_time
+      , found_at
+      , found_at as hint_time
     """.stripMargin
 
   def all: Seq[Coordinate] = {
