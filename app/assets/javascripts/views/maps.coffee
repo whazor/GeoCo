@@ -97,7 +97,7 @@ class @views.Maps extends Backbone.View
           strokeOpacity: 0.8,
           strokeWeight: 2,
           fillColor: data.color,
-          fillOpacity: 0.05
+          fillOpacity: 0.2
         p.setMap @map
         @deelgebieden[name] = poly: p, points: data.points
 
@@ -112,9 +112,9 @@ class @views.Maps extends Backbone.View
           position: pos
           icon:
             path: m.SymbolPath.CIRCLE
-            strokeColor: "#11BB11"
+            strokeColor: "#FF0000"
             strokeOpacity: 0
-            fillColor: "#11BB11"
+            fillColor: "#FF0000"
             fillOpacity: 0.8
             strokeWeight: 1
             scale: 3

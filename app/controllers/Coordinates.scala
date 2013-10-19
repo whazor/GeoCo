@@ -30,9 +30,9 @@ object Coordinates extends Controller with Secured {
   private def getList(sort: String): Seq[Coordinate] = {
     sort match {
         case "hints" =>
-          Coordinate.all.filter { _.isInstanceOf[Hint] }
+          Coordinate.all.filter { _.isInstanceOf[models.Hint] }
         case "hunts" =>
-          Coordinate.all.filter { _.isInstanceOf[Hunt] }
+          Coordinate.all.filter { _.isInstanceOf[models.Hunt] }
         case _ => Coordinate.all
     }
   }
