@@ -22,6 +22,12 @@ object Coordinates extends Controller with Secured {
     }
     Ok(Json.toJson(cs.map(h => h.toJson)))
   }
+
+  def emptyCache = IsAuthenticated { (user, request) =>
+    resetList()
+    Ok("HOI")
+  }
+
   private def resetList() = {
     Cache.set("coordinates_hints", getList("hints"))
     Cache.set("coordinates_hunts", getList("hunts"))
