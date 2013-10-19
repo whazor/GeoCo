@@ -38,7 +38,7 @@ object Coordinates extends Controller with Secured {
   }
 
   case class Hint(fox_group: String, hour: Int, raw: String)
-  case class Hunt(fox_group: String, found_at: Int, raw: String)
+  case class Hunt(fox_group: String, found_at: Date, raw: String)
 
   def check(sort: String) = IsAuthenticated { (user, request) =>
     sort match {
@@ -72,7 +72,7 @@ object Coordinates extends Controller with Secured {
       case "hunts" => Json.reads[Hunt].reads(request.body.asJson.get).fold(
         invalid = { errors => BadRequest(JsError.toFlatJson(errors)) },
         valid = { res =>
-          val c = Coordinate.createHunt(res.fox_group, user, res.raw, new Date(res.found_at)).get.toJson
+          val c = Coordinate.createHunt(res.fox_group, user, res.raw, res.found_at).get.toJson
           resetList()
           Ok(c)
         })
@@ -92,7 +92,7 @@ object Coordinates extends Controller with Secured {
       case "hunts" => Json.reads[Hunt].reads(request.body.asJson.get).fold(
         invalid = { errors => BadRequest(JsError.toFlatJson(errors)) },
         valid = { res =>
-          val c = Coordinate.updateHunt(id, res.fox_group, user, res.raw, new Date(res.found_at)).get.toJson
+          val c = Coordinate.updateHunt(id, res.fox_group, user, res.raw, res.found_at).get.toJson
           resetList()
           Ok(c)
         })
