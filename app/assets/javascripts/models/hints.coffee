@@ -12,11 +12,11 @@
         lastUpdate = Math.max lastUpdate, (model.id ? -1000)
         lastUpdateTime = Math.max lastUpdateTime, (model.updateAt ? 0)
 
-class Coordinate extends Backbone.Model
+class @Coordinate extends Backbone.Model
 
-class Hint extends Coordinate
+class @Hint extends Coordinate
 
-class Hunt extends Coordinate
+class @Hunt extends Coordinate
 
 class window.CoordinateCollection extends Backbone.Collection
 

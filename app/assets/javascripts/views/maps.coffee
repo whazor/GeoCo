@@ -6,16 +6,16 @@ class @views.Maps extends Backbone.View
   el: '#maps'
   initialize: (@hints, @hunts) ->
     @deelgebieden = {}
-    @markers = []
+    @markers = {}
     @collection = {}
     @timeout = null
     @paths = {}
 
     @$el = $(@el)
     @map = new m.Map @el,
-        zoom: 13,
-        mapTypeId: m.MapTypeId.ROADMAP
-        scaleControl: true
+      zoom: 13,
+      mapTypeId: m.MapTypeId.ROADMAP
+      scaleControl: true
     allowedBounds = new m.LatLngBounds new m.LatLng(51.7337, 4.9937), new m.LatLng(52.5219, 6.8330)
     @map.fitBounds allowedBounds
     lastValidCenter = @map.getCenter()
@@ -69,19 +69,41 @@ class @views.Maps extends Backbone.View
 
   drawModel: (model) =>
     group = model.get 'fox_group'
-    @markers[group].setMap(null) if @markers[group]
-    @markers[group] = new m.Marker
+    @markers[group] = markers: [] unless @markers[group]
+    @markers[group].head.setMap(null) if @markers[group].head
+    @markers[group].head = new m.Marker
       position: new m.LatLng model.get("lat"), model.get("lng")
       map: @map
       icon: "/assets/img/marker_#{group.charAt(0).toUpperCase()}.png"
       title: new Date(model.get("time")).toLocaleTimeString().slice(0, 5)
-    @markers[group].setMap @map
+    @markers[group].head.setMap @map
 
   render: =>
     for group in window.fox_groups when @collection[group] != null and @collection[group].length > 0
       model = @collection[group][@collection[group].length - 1]
       @drawModel model
-      @paths[group].setPath (new m.LatLng(model.get('lat'), model.get('lng')) for model in @collection[group])
+      #@paths[group].setPath path = (new m.LatLng(model.get('lat'), model.get('lng')) for model in @collection[group])
+      for marker in @markers[group].markers
+        market.setMap null
+      @markers[group].markers = []
+      path = for model in @collection[group]
+        pos = new m.LatLng model.get('lat'), model.get('lng');
+        type = if model instanceof Hint then 'hint' else 'hunt'
+        s = new m.Marker
+          position: pos
+          icon:
+            path: m.SymbolPath.CIRCLE
+            strokeColor: "#FF0000"
+            strokeOpacity: 0
+            fillColor: "#FF0000"
+            fillOpacity: 0.8
+            strokeWeight: 1
+            scale: 3
+          title: "#{type} #{new Date(model.get("time")).toLocaleTimeString().slice(0, 5)}"
+        s.setMap @map
+        @markers[group].markers.push s
+        pos
+      @paths[group].setPath path
     @
 
   zoom: (location, zoom) ->

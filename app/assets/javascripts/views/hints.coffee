@@ -24,8 +24,8 @@ class @views.Hints extends Backbone.View
         for name, index in window.fox_groups when @hints[hour][name].model?
           model = @hints[hour][name].model
           group = name.charAt(0).toUpperCase() + name.slice(1)
-          o += "$('input[name=i#{group}1]')[0].value = '#{model.get 'x'}';\n"
-          o += "$('input[name=i#{group}2]')[0].value = '#{model.get 'y'}';\n"
+          o += "$('input[name=i#{group}1]')[0].value = '#{Math.floor 0.1 * model.get 'x'}';\n"
+          o += "$('input[name=i#{group}2]')[0].value = '#{Math.floor 0.1 * model.get 'y'}';\n"
         tr.clickover
           title: "copypaste"
           content: "<textarea>"+o+"</textarea>"
