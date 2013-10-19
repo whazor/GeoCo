@@ -20,6 +20,16 @@ class @views.Maps extends Backbone.View
     @map.fitBounds allowedBounds
     lastValidCenter = @map.getCenter()
 
+    zoom = $("""
+      <div style="cursor: pointer; padding: 5px" class="gmnoprint">
+        <img src="/assets/img/Resize.png" style='height: 50%; width: 50%' />
+      </div>
+    """).click =>
+      $("body").toggleClass("fullscreen")
+      m.event.trigger(@map, 'resize')
+      location.hash = if $("body").hasClass 'fullscreen' then 'fullscreen' else ''
+    @map.controls[m.ControlPosition.RIGHT_BOTTOM].push zoom[0]
+
     m.event.addListener @map, 'center_changed', =>
       if not allowedBounds.contains @map.getCenter()
         @map.panTo lastValidCenter
@@ -82,24 +92,29 @@ class @views.Maps extends Backbone.View
     for group in window.fox_groups when @collection[group] != null and @collection[group].length > 0
       model = @collection[group][@collection[group].length - 1]
       @drawModel model
-      #@paths[group].setPath path = (new m.LatLng(model.get('lat'), model.get('lng')) for model in @collection[group])
       for marker in @markers[group].markers
-        market.setMap null
+        marker.setMap null
       @markers[group].markers = []
       path = for model in @collection[group]
         pos = new m.LatLng model.get('lat'), model.get('lng');
-        type = if model instanceof Hint then 'hint' else 'hunt'
+        specific =
+          if model instanceof Hint
+            type: 'hint'
+            color: '#FB00D6'
+          else
+            type: 'hunt'
+            color: '#2E23FE'
         s = new m.Marker
           position: pos
           icon:
             path: m.SymbolPath.CIRCLE
-            strokeColor: "#FF0000"
+            strokeColor: specific.color
             strokeOpacity: 0
-            fillColor: "#FF0000"
+            fillColor: specific.color
             fillOpacity: 0.8
             strokeWeight: 1
             scale: 3
-          title: "#{type} #{new Date(model.get("time")).toLocaleTimeString().slice(0, 5)}"
+          title: "#{specific.type} #{new Date(model.get("time")).toLocaleTimeString().slice(0, 5)}"
         s.setMap @map
         @markers[group].markers.push s
         pos
