@@ -18,7 +18,7 @@ object User {
   }
 
   def authenticate(name:String, password:String) : Boolean = {
-    if (!password.equals("aardappel"))
+    if (!password.equals("flowerpower"))
       return false
     getByNormalized(name) match {
       case Some(user) => user
